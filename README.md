@@ -1,4 +1,8 @@
 # Project-Virt
 
-Planning:
-Alles maken op de dag voor opleveren
+**Developed By:**
+- Niels van Marion
+- Menno Franzen
+- John Verdonck
+- Jurre Wolff
+
