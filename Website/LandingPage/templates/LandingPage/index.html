@@ -16,47 +16,45 @@
         <link rel="stylesheet" href="{% static 'LandingPage/CSS/index.css' %}">
     </head>
     <body>
-        <nav class="navbar navbar-toggleable-md navbar-light">
-            <div class="container">
-                <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarContent">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <a class="navbar-brand" href="#">VMX VPS Hosting</a>
+        <!-- Navigation Bar -->
+        <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand" href="#">VMX VPS Hosting</a>
             
-                <div class="collapse navbar-collapse" id="navbarContent">
-                <ul class="navbar-nav ml-auto">
-                    <div class="navbar-item">
-                        <a href="#home" class="nav-link">
-                            Intro
-                        </a>
-                    </div>
-                    <div class="navbar-item">
-                        <a href="" class="nav-link">
-                            Services
-                        </a>
-                    </div>
-                    <div class="navbar-item">
-                        <a href="" class="nav-link">
-                            Packages
-                        </a>
-                    </div>
-                    <div class="navbar-item">
-                        <a href="" class="nav-link">
-                            Support
-                        </a>
-                    </div>
+            <div class="collapse navbar-collapse text-right" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto mt-sm-3 mb-sm-3 mt-md-0 mb-md-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#intro">Intro</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#home">Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#home">Packages</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#home">Support</a>
+                    </li>
                 </ul>
-                </div>
             </div>
-            
         </nav>
 
         <!-- Intro Secion -->
         <header class="container-fluid" id="intro">
-            TXT
+            <div class="image-container row">
+                <div class="dark-overlay">
+                    <div class="container">
+                        <h1 class="display-4 text-center mt-4 title">Scale your business at the speed of light</h1>
+                    </div>
+                </div>    
+            </div>
         </header>
 
-        <!-- Bootstrap Javascript -->
+        <!-- JQuery, Popper.js and Bootstrap -->
+        <script src=" https://code.jquery.com/jquery-3.2.1.slim.min.js "></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js "></script>
         <script src="{% static 'LandingPage/Bootstrap/js/bootstrap.min.js' %}"></script>
     </body>
 </html>
