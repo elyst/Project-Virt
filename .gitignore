@@ -1,7 +1,5 @@
-# Loose files
-*.pyc
 .vscode
+*.pyc
 
-# Folders
 __pycache__/
 
