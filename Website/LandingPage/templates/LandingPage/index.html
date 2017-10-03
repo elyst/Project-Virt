@@ -24,7 +24,7 @@
             <a class="navbar-brand" href="#">VMX VPS Hosting</a>
             
             <div class="collapse navbar-collapse text-right" id="navbarSupportedContent">
-                <ul class="navbar-nav ml-auto mt-sm-3 mb-sm-3 mt-md-0 mb-md-0">
+                <ul class="navbar-nav ml-auto mt-sm-3 mb-sm-3 mt-md-0 mb-md-0 mx-3">
                     <li class="nav-item">
                         <a class="nav-link" href="#intro">Intro</a>
                     </li>
@@ -36,6 +36,16 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#home">Support</a>
+                    </li>
+                    <li class="nav-item">
+                        <form action="/VMManager/register" method="get">
+                            <input type="submit" value="Register" class="btn btn-success mx-2">    
+                        </form>
+                    </li>
+                    <li class="nav-item">
+                        <form action="/VMManager/login" method="get">
+                            <input type="submit" value="Log In" class="btn btn-info mx-2">
+                        </form>
                     </li>
                 </ul>
             </div>
