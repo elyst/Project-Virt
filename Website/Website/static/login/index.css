@@ -1,0 +1,71 @@
+html, body{
+background-color:#34515E !important;
+ font-family: 'Open Sans Condensed', sans-serif !important;
+  font-size: 18px !important;
+
+}
+
+.register-form {
+  font-size: 16px;
+ left: 50%;
+  top: 50%;
+  position: absolute; 
+  -webkit-transform: translate3d(-50%, -50%, 0);
+  -moz-transform: translate3d(-50%, -50%, 0);
+  transform: translate3d(-50%, -50%, 0);
+
+}
+
+.regbutton{    
+  height: 50px;
+  width: 200px;
+  background-color:tomato !important;
+  border-radius: 0px;
+  font-size: 18px;
+  color:white;
+  border: none !important;
+  margin: auto; 
+  text-transform:uppercase;
+}
+.regbutton:hover{    
+  color: white;
+  background-color:#aa422f !important;
+}
+.regbutton:active{    
+  color: white;
+  background-color:#aa422f !important;
+}
+.logbutton{    
+  height: 50px;
+  width: 200px;
+  background-color:yellowgreen !important;
+  border-radius: 0px;
+  font-size: 18px;
+  color:white;
+  border: none !important;
+  margin: auto;
+  text-transform:uppercase;
+  
+}
+.logbutton:hover{    
+  color: white;
+  background-color:#769B28 !important;
+}
+.logbutton:active{    
+  color: white;
+  background-color:#769B28 !important;
+}
+
+.register-form label{
+  color: aliceblue;
+  text-transform: uppercase;
+  
+}
+.register-form input{
+  margin-bottom: 5px ;
+  border-radius: 25px;
+  height: 40px ;
+  border-radius: 0px ;
+}
+
+
