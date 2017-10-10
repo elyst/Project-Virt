@@ -1,0 +1,70 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>VMX VPS Hosting</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Bootstrap Framework -->
+        <link rel="stylesheet" href="{% static 'LandingPage/Bootstrap/css/bootstrap.min.css' %}">        
+        <link rel="stylesheet" href="{% static 'LandingPage/Bootstrap/css/bootstrap-grid.min.css' %}">
+        <link rel="stylesheet" href="{% static 'LandingPage/Bootstrap/css/bootstrap-reboot.min.css' %}">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="{% static 'LandingPage/CSS/index.css' %}">
+    </head>
+    <body>
+        <!-- Navigation Bar -->
+        <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand" href="#">VMX VPS Hosting</a>
+            
+            <div class="collapse navbar-collapse text-right" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto mt-sm-3 mb-sm-3 mt-md-0 mb-md-0 mx-3">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#intro">Intro</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#home">Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#home">Packages</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#home">Support</a>
+                    </li>
+                    <li class="nav-item">
+                        <form action="/VMManager/register" method="get">
+                            <input type="submit" value="Register" class="btn btn-success mx-2">    
+                        </form>
+                    </li>
+                    <li class="nav-item">
+                        <form action="/VMManager/login" method="get">
+                            <input type="submit" value="Log In" class="btn btn-info mx-2">
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Intro Secion -->
+        <header class="container-fluid" id="intro">
+            <div class="image-container row">
+                <div class="dark-overlay">
+                    <div class="container">
+                        <h1 class="display-4 text-center mt-4 title">Scale your business at the speed of light</h1>
+                    </div>
+                </div>    
+            </div>
+        </header>
+
+        <!-- JQuery, Popper.js and Bootstrap -->
+        <script src=" https://code.jquery.com/jquery-3.2.1.slim.min.js "></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js "></script>
+        <script src="{% static 'LandingPage/Bootstrap/js/bootstrap.min.js' %}"></script>
+    </body>
+</html>

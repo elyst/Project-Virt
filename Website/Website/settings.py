@@ -25,12 +25,14 @@ SECRET_KEY = 'dpd0q#srqwfsf2v4vsnu24n*n5z*)rt3mrwq1bp-t**5x6r8!k'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'LandingPage',
+    'VMManager',
     'Login',
     'Website',
     'django.contrib.admin',
