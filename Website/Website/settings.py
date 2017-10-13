@@ -20,28 +20,42 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+<<<<<<< HEAD
 SECRET_KEY = 'dpd0q#srqwfsf2v4vsnu24n*n5z*)rt3mrwq1bp-t**5x6r8!k'
+=======
+SECRET_KEY = 'wcm8!j7f_^eu@o76u63f5*(qo$*g*d*78#kh^fjmrstg2gips8'
+>>>>>>> ecc100bfd1c259bfb914a5f1c79a9faf5cf71dc4
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+<<<<<<< HEAD
 ALLOWED_HOSTS = ["*"]
+=======
+ALLOWED_HOSTS = []
+>>>>>>> ecc100bfd1c259bfb914a5f1c79a9faf5cf71dc4
 
 
 # Application definition
 
 INSTALLED_APPS = [
+<<<<<<< HEAD
     'LandingPage',
     'VMManager',
     'Login',
     'Website',
+=======
+>>>>>>> ecc100bfd1c259bfb914a5f1c79a9faf5cf71dc4
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+<<<<<<< HEAD
     'bootstrap3',
+=======
+>>>>>>> ecc100bfd1c259bfb914a5f1c79a9faf5cf71dc4
 ]
 
 MIDDLEWARE = [
@@ -59,7 +73,11 @@ ROOT_URLCONF = 'Website.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+<<<<<<< HEAD
         'DIRS': [''],
+=======
+        'DIRS': [],
+>>>>>>> ecc100bfd1c259bfb914a5f1c79a9faf5cf71dc4
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
