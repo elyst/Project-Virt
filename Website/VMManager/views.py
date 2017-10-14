@@ -7,7 +7,7 @@ import os
 
 # Create your views here.
 def index(request):
-    createNewVM("Niels", 2, 500000, 30)
+    # createNewVM("Name", 2, 500000, 30)
     return HttpResponse("VMManager works")
 
 def createNewVM(name, cores, ram, storage):
@@ -22,14 +22,14 @@ def createNewVM(name, cores, ram, storage):
     vm.save()
 
     os.system(
-        "sudo qemu-img create -f qcow2 /home/niels/EXTDrive/VM/{NAME}.vm {SIZE}G".format(
+        "sudo qemu-img create -f qcow2 /home/niels/EXTDrive/VM/{NAME}.qcow2 {SIZE}G".format(
             NAME = vm.Name,
             SIZE = vm.DISKSize
         )
     )
 
     os.system(
-        "qemu-img resize /home/niels/EXTDrive/VM/{NAME}.vm +{SIZE}G".format(
+        "qemu-img resize /home/niels/EXTDrive/VM/{NAME}.qcow2 +{SIZE}G".format(
             NAME = vm.Name,
             SIZE = vm.DISKSize
         )
@@ -55,8 +55,8 @@ def createNewVM(name, cores, ram, storage):
                         <devices>
                             <emulator>/usr/bin/kvm</emulator>
                             <disk type="file" device="disk">
-                                <driver name="qemu" type="raw"/>
-                                <source file="/home/niels/EXTDrive/VM/{NAME}.vm"/>
+                                <driver name="qemu" type="qcow2"/>
+                                <source file="/home/niels/EXTDrive/VM/{NAME}.qcow2"/>
                                 <target dev="vda" bus="virtio"/>
                                 <address type="pci" domain="0x0000" bus="0x00" slot="0x04" function="0x0"/>
                                 </disk>
