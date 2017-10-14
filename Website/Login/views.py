@@ -9,7 +9,7 @@ from Login.forms import SignUpForm
 
 def signUpRequest(request):
     if request.user.is_authenticated():
-        return redirect('home')
+        return redirect('/dashboard')
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
@@ -32,7 +32,7 @@ def signUpRequest(request):
 
 def custom_login(request, message=None):
     if request.user.is_authenticated():
-        return redirect('home')
+        return redirect('/dashboard')
     else:
         return login(request)
 
