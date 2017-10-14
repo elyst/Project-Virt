@@ -14,7 +14,7 @@ def createNewVM(name, cores, ram, storage):
     vm = VirtualMachine()
 
     vm.Name = name
-    vm.ID = uuid.uuid4()
+    vm.VMID = uuid.uuid4()
     vm.CPUCores = cores
     vm.RAMAmount = ram
     vm.DISKSize = storage
@@ -23,6 +23,13 @@ def createNewVM(name, cores, ram, storage):
 
     os.system(
         "sudo qemu-img create -f qcow2 /home/niels/EXTDrive/VM/{NAME}.vm {SIZE}G".format(
+            NAME = vm.Name,
+            SIZE = vm.DISKSize
+        )
+    )
+
+    os.system(
+        "qemu-img resize /home/niels/EXTDrive/VM/{NAME}.vm +{SIZE}G".format(
             NAME = vm.Name,
             SIZE = vm.DISKSize
         )
