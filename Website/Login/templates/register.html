@@ -1,0 +1,37 @@
+{% extends "base.html" %} {% block content %} {%load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'login/index.css' %}" /> {% load bootstrap3 %} {% bootstrap_css %} {% bootstrap_javascript %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'login/login.css' %}">
+<div class="error-message text-center">
+  {% bootstrap_form_errors form %}
+</div>
+<div class="error-message text-center">
+    {{test}}
+  </div>
+<div class="col-xs-12 col-s-12">
+  <div class="wrapper">
+    <div class="form-signin">
+      <form method="post">
+        <h1 align="center">Register</h1> &nbsp {% csrf_token %} {% for field in form %}
+
+        <div class="form-group">
+          {% bootstrap_field field show_help=False %}
+        </div>
+
+
+
+        {% endfor %}
+
+        <hr>
+        <div class="form-actions">
+          <button class="btn btn-primary" type="submit">Register</button>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}
