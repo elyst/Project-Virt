@@ -1,5 +1,6 @@
 {% extends 'base.html' %} {% block content %} {% load bootstrap3 %} {% load static %} {% bootstrap_css %}
 <link rel="stylesheet" type="text/css" href="{% static 'dashboard.css' %}">
+<span id="_pageName" style="display:none">{% block pagename %}{% endblock %}</span>
 <nav class="navbar navbar-inverse sidebar" role="navigation">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -14,22 +15,23 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-sidebar-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li class="active">
+                <li data-link-name="home">
                     <a href="/dashboard/">Dashboard
                         <span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-home"></span>
                     </a>
                 </li>
-                <li>
+                <li data-link-name="vm">
                     <a href="/dashboard/my-vm/">My Virtual Machines
                         <span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-tasks"></span>
                     </a>
                 </li>
-                <li>
+                <li data-link-name="create">
                     <a href="/dashboard/vm-create">Create Virtual Machine
                         <span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-edit"></span>
                     </a>
                 </li>
-                <li>
+              
+                <li data-link-name="account">
                     <a href="/dashboard/account">Account Info
                         <span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-user"></span>
                     </a>
@@ -45,9 +47,7 @@
     </div>
 </nav>
 <div class="main">
-    {% csrf_token %} 
-    {% block sub-content %}
-    {% endblock %}
+    {% csrf_token %} {% block sub-content %}{% endblock %}
 
 </div>
 
@@ -66,14 +66,16 @@
         }
 
     }
-    $(document).ready(function () {
-        htmlbodyHeightUpdate()
-        $(window).resize(function () {
-            htmlbodyHeightUpdate()
-        });
-        $(window).scroll(function () {
-            height2 = $('.main').height()
-            htmlbodyHeightUpdate()
-        });
+</script>
+
+<script>
+    $(function() {
+      var pageName = document.getElementById('_pageName');
+      if (pageName != null) { pageName = pageName.innerHTML; }
+      else { pageName = ''; }
+      if (pageName.length > 0) {
+          $("li[data-link-name='" + pageName + "']").addClass('active');
+      }
     });
+    </script>
 </script> {% endblock %}
