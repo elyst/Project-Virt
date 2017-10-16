@@ -1,11 +1,21 @@
-{% extends "home/dashboard.html" %}
+{% extends "home/dashboard.html" %}{% load bootstrap3 %} {% load static %} {% bootstrap_css %}
 
 {% block sub-content %}
 
 <form action="/dashboard/vm-create/" method="post">
-    {% csrf_token %} 
-    {{ form }}
-    <input type="submit" value="Maak Virtual Machine">
+    <div class="col-lg-5">
+    {% csrf_token %} {% for field in form %}
+        
+            <div class="form-group">
+              {% bootstrap_field field show_help=False %}
+            </div>
+    
+    
+    
+            {% endfor %}
+            <input class="btn btn-primary" type="submit" value="Maak Virtual Machine">
+            </div>
+   
 </form>
 
 {% endblock %}
