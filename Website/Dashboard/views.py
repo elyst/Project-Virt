@@ -7,5 +7,12 @@ def index(request):
     else:
         return redirect('/login')
 
+def myVM(request):
+    return HttpResponse("501 Not Implemented")
 
+def createVM(request):
+    return HttpResponse("501 Not Implemented")
+
+def accountInfo(request):
+    return HttpResponse("501 Not Implemented")
       
