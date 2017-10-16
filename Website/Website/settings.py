@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     'LandingPage',
+    'Dashboard',
     'VMManager',
     'Login',
     'Website',
@@ -119,7 +120,14 @@ USE_L10N = True
 USE_TZ = True
 
 
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# url to redirect after successfull login
+
+LOGIN_REDIRECT_URL = '/dashboard'
+LOGIN_URL='/login'
