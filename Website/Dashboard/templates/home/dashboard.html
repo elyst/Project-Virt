@@ -45,13 +45,9 @@
     </div>
 </nav>
 <div class="main">
-    {% csrf_token %} {% for field in form %}
-
-    <div class="form-group">
-        {% bootstrap_field field show_label=False %}
-    </div>
-
-    {% endfor %}
+    {% csrf_token %} 
+    {% block sub-content %}
+    {% endblock %}
 
 </div>
 

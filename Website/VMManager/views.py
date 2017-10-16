@@ -1,4 +1,5 @@
 from django.shortcuts import render, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 from .models import VirtualMachine
 
 import uuid
@@ -10,7 +11,10 @@ def index(request):
     # createNewVM("Name", 2, 500000, 30)
     return HttpResponse("VMManager works")
 
-def createNewVM(name, cores, ram, storage):
+def createNewVM(request, name, cores, ram, storage):
+    if not request.user.is_authenticated():
+        return
+
     vm = VirtualMachine()
 
     vm.Name = name
@@ -22,14 +26,14 @@ def createNewVM(name, cores, ram, storage):
     vm.save()
 
     os.system(
-        "sudo qemu-img create -f qcow2 /home/niels/EXTDrive/VM/{NAME}.qcow2 {SIZE}G".format(
+        "sudo qemu-img create -f qcow2 '/home/niels/EXTDrive/VM/{NAME}.qcow2' {SIZE}G".format(
             NAME = vm.Name,
             SIZE = vm.DISKSize
         )
     )
 
     os.system(
-        "qemu-img resize /home/niels/EXTDrive/VM/{NAME}.qcow2 +{SIZE}G".format(
+        "qemu-img resize '/home/niels/EXTDrive/VM/{NAME}.qcow2' +{SIZE}G".format(
             NAME = vm.Name,
             SIZE = vm.DISKSize
         )

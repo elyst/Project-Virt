@@ -1,0 +1,11 @@
+{% extends "home/dashboard.html" %}
+
+{% block sub-content %}
+
+<form action="/dashboard/vm-create/" method="post">
+    {% csrf_token %} 
+    {{ form }}
+    <input type="submit" value="Maak Virtual Machine">
+</form>
+
+{% endblock %}
