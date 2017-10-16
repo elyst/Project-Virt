@@ -91,4 +91,4 @@ def createNewVM(name, cores, ram, storage):
     conn.createXML(vmTemplate)
     
 
-    return "FUCK YOU"
+    return ""
