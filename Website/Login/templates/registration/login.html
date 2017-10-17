@@ -2,6 +2,13 @@
 
 <link rel="stylesheet" type="text/css" href="{% static 'login/login.css' %}">
 <div class="error-message text-center">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-success alert-dismissable fade in">{{ message }}
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    </div>
+  {% endfor %}
+  {% endif %}
   {% bootstrap_form_errors form %}
 </div>
 <div class="col-xs-12 col-s-12">
@@ -29,7 +36,7 @@
       </form>
     </div>
     <div class="text-center" style="margin-top:10px; color:white;">
-      Don't have an account? <a href="/" style="color:white; text-decoration:underline;  font-weight:bold; font-size:20px;">Sign Up!</a>
+      Don't have an account? <a href="/login/register" style="color:white; text-decoration:underline;  font-weight:bold; font-size:20px;">Sign Up!</a>
     </div>
   </div>
 </div>
