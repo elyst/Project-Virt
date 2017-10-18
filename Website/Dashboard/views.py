@@ -11,7 +11,7 @@ def index(request):
         return redirect('/login')
 
 def myVM(request):
-    return start_VM(request)
+    return HttpResponse("501 Not Implemented")
 
 def createVM(request):
     if request.user.is_authenticated():
@@ -32,11 +32,11 @@ def createVM(request):
             
             return redirect("/dashboard/")
 
-def start_VM(request):
-    return HttpResponse('Vm is gestart!')
-    
+
     
 
 def accountInfo(request):
     return HttpResponse("501 Not Implemented")
+      
+
       
