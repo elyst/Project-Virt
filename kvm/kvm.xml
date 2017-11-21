@@ -1,9 +1,9 @@
 <domain type="kvm">
-  <name>NoSQL</name>
-  <uuid>432150f7-7a0c-42d1-b055-ee04842a4e9f</uuid>
-  <memory>524288</memory>
-  <currentMemory>524288</currentMemory>
-  <vcpu>2.5</vcpu>
+  <name>alice</name>
+  <uuid>f5b8c05b-9c7a-3211-49b9-2bd635f7e2aa</uuid>
+  <memory>1024</memory>
+  <currentMemory>1024</currentMemory>
+  <vcpu>2</vcpu>
   <os>
     <type>hvm</type>
     <boot dev="cdrom" />
@@ -19,13 +19,13 @@
     <emulator>/usr/bin/kvm</emulator>
     <disk device="disk" type="file">
       <driver name="qemu" type="raw" />
-      <source file="/home/jurrewolff/Desktop/git/Project-Virt/kvm/images/NoSQL.img" />
+      <source file="/home/dev/images/alice.img" />
       <target bus="virtio" dev="vda" />
       <address bus="0x00" domain="0x0000" function="0x0" slot="0x04" type="pci" />
     </disk>
     <disk device="cdrom" type="file">
       <driver name="qemu" type="raw" />
-      <source file="/home/jurrewolff/Desktop/git/Project-Virt/kvm/iso/ubuntu.iso" />
+      <source file="/home/dev/iso/CentOS-6.5-x86_64-minimal.iso" />
       <target bus="ide" dev="hdc" />
       <readonly />
       <address bus="1" controller="0" target="0" type="drive" unit="0" />
