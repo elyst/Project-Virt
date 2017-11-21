@@ -1,5 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 from . import forms
 from VMManager.views import createNewVM
@@ -42,7 +43,14 @@ def start_VM(request):
 
 @login_required
 def accountInfo(request):
-    userinf = UserInfo.objects.get(user = request.user)
+    try:
+        userinf = UserInfo.objects.get(user = request.user)
+    except:
+        userinf = UserInfo()
+        userinf.user = User.objects.get(pk=request.user.id)
+        userinf.save()
+    
+    print(userinf.name)
 
 
     return render(request, "Dashboard/AccountInfo.html", {

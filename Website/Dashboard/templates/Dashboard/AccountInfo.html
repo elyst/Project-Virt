@@ -9,5 +9,13 @@
 {% endblock %}
 
 {% block sub-content %}
-    {{ info }}
+<div class="container">
+    <div class="row d-flex flex-row" id="personalInfo">
+        <img class="img" alt="Some Image Here">
+    </div>
+    <div class="info">
+        <span><b>Volledige Naam:</b> {{ info.name }}{{ info.surname }}</span>
+        <span><b>Geboortedatum:</b> {{ info.birthdate }}</span>
+    </div>
+</div>
 {% endblock %}
