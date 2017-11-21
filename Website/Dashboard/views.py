@@ -4,10 +4,12 @@ from django.contrib.auth.decorators import login_required
 from . import forms
 from VMManager.views import createNewVM
 
+from .models import UserInfo
+
 # Create your views here.
 @login_required
 def index(request):
-    return render(request, 'home/home.html')
+    return render(request, 'Dashboard/Index.html')
 
 @login_required
 def myVM(request):
@@ -18,7 +20,7 @@ def createVM(request):
     if request.method == "GET":
         # Generate form and show CreateVM to the user
         form = forms.NewVMForm()
-        return render(request, "home/CreateVM.html", {'form': form})
+        return render(request, "Dashboard/CreateVM.html", {'form': form})
     elif request.method == "POST":
         # Populate, verify and process the input data
         form = forms.NewVMForm(request.POST)
@@ -40,5 +42,9 @@ def start_VM(request):
 
 @login_required
 def accountInfo(request):
-    return HttpResponse("501 Not Implemented")
-      
+    userinf = UserInfo.objects.get(user = request.user)
+
+
+    return render(request, "Dashboard/AccountInfo.html", {
+        "info": userinf
+    })

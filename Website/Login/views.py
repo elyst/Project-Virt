@@ -9,6 +9,8 @@ from django.contrib.auth.views import login
 from Login.forms import SignUpForm  
 from django.http import HttpResponseRedirect
 
+from Dashboard.models import UserInfo
+
 def signUpRequest(request):
     if request.user.is_authenticated():
         return redirect('/dashboard')
@@ -18,6 +20,7 @@ def signUpRequest(request):
             form.save()
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password1')
+
             messages.success(request, 'Thanks for registration, you can now log in!')
             return redirect("/login")
     else:
@@ -33,6 +36,6 @@ def signUpRequest(request):
 def custom_login(request):
     if request.user.is_authenticated():
         return redirect('/dashboard')
-    else:
+    else:        
         return login(request)
 

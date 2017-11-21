@@ -1,0 +1,13 @@
+{% extends "dashboard.html" %}
+{% load bootstrap3 %}
+{% load static %}
+
+{% bootstrap_css %}
+
+{% block pagename %}
+    Account Info
+{% endblock %}
+
+{% block sub-content %}
+    {{ info }}
+{% endblock %}
