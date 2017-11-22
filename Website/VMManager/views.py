@@ -26,14 +26,14 @@ def createNewVM(request, name, cores, ram, storage):
     vm.save()
 
     os.system(
-        "sudo qemu-img create -f qcow2 '/home/niels/EXTDrive/VM/{NAME}.qcow2' {SIZE}G".format(
+        "sudo qemu-img create -f qcow2 /Users/john/Documents/vm_images/{NAME}.qcow2 {SIZE}G".format(
             NAME = vm.Name,
             SIZE = vm.DISKSize
         )
     )
 
     os.system(
-        "qemu-img resize '/home/niels/EXTDrive/VM/{NAME}.qcow2' +{SIZE}G".format(
+        "qemu-img resize /Users/john/Documents/vm_images/{NAME}.qcow2 +{SIZE}G".format(
             NAME = vm.Name,
             SIZE = vm.DISKSize
         )
@@ -60,13 +60,13 @@ def createNewVM(request, name, cores, ram, storage):
                             <emulator>/usr/bin/kvm</emulator>
                             <disk type="file" device="disk">
                                 <driver name="qemu" type="qcow2"/>
-                                <source file="/home/niels/EXTDrive/VM/{NAME}.qcow2"/>
+                                <source file="/Users/john/Documents/vm_images/{NAME}.qcow2"/>
                                 <target dev="vda" bus="virtio"/>
                                 <address type="pci" domain="0x0000" bus="0x00" slot="0x04" function="0x0"/>
                                 </disk>
                             <disk type="file" device="cdrom">
                                 <driver name="qemu" type="raw"/>
-                                <source file="/home/niels/Downloads/ubuntu.iso"/>
+                                <source file="/Users/john/Library/Mobile\ Documents/com~apple~CloudDocs/Software/OperatingSystems/Ubuntu\ Desktop/ubuntu-16.04.3-desktop-amd64.iso"/>
                                 <target dev="hdc" bus="ide"/>
                                 <readonly/>
                                 <address type="drive" controller="0" bus="1" target="0" unit="0"/>
@@ -95,4 +95,8 @@ def createNewVM(request, name, cores, ram, storage):
     conn.createXML(vmTemplate)
     
 
+    return ""
+
+def destroyVM(name):
+    
     return ""
