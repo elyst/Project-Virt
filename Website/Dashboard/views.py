@@ -34,14 +34,9 @@ def createVM(request):
         
         return redirect("/dashboard/")
 
-<<<<<<< HEAD
-
-    
-=======
 @login_required
 def start_VM(request):
     return HttpResponse('Vm is gestart!')
->>>>>>> master
 
 @login_required
 def accountInfo(request):
