@@ -11,7 +11,7 @@ def index(request):
 
 @login_required
 def myVM(request):
-    return start_VM(request)
+    return HttpResponse("501 Not Implemented")
 
 @login_required
 def createVM(request):
@@ -41,4 +41,6 @@ def start_VM(request):
 @login_required
 def accountInfo(request):
     return HttpResponse("501 Not Implemented")
+      
+
       

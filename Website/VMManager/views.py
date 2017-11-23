@@ -27,14 +27,14 @@ def createNewVM(request, name, cores, ram, storage):
     vm.save()
 
     os.system(
-        "sudo qemu-img create -f qcow2 '/home/niels/EXTDrive/VM/{NAME}.qcow2' {SIZE}G".format(
+        "sudo qemu-img create -f qcow2 /Users/john/Documents/vm_images/{NAME}.qcow2 {SIZE}G".format(
             NAME = vm.Name,
             SIZE = vm.DISKSize
         )
     )
 
     os.system(
-        "qemu-img resize '/home/niels/EXTDrive/VM/{NAME}.qcow2' +{SIZE}G".format(
+        "qemu-img resize /Users/john/Documents/vm_images/{NAME}.qcow2 +{SIZE}G".format(
             NAME = vm.Name,
             SIZE = vm.DISKSize
         )
@@ -98,5 +98,10 @@ def createNewVM(request, name, cores, ram, storage):
     # Send the string to libvirt
     conn = libvirt.open()
     conn.createXML(xmlstr)
+    
+
+    return ""
+
+def destroyVM(name):
     
     return ""

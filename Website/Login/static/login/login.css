@@ -37,3 +37,7 @@ html, body{
     margin-top:10px;
     margin-bottom:0px;
 }
+div.g-recaptcha {
+    margin: 0 auto;
+    width: 304px;
+  }
