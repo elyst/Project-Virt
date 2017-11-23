@@ -2,6 +2,7 @@ from django.shortcuts import render, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import VirtualMachine
 
+import xml.etree.ElementTree as ET
 import uuid
 import libvirt
 import os
@@ -39,60 +40,63 @@ def createNewVM(request, name, cores, ram, storage):
         )
     )
 
-    vmTemplate = """<domain type='kvm'>
-                        <name>{NAME}</name>
-                        <uuid>{UUID}</uuid>
-                        <memory>{MEMORY}</memory>
-                        <currentMemory>{MEMORY}</currentMemory>
-                        <vcpu>{CPU}</vcpu>
-                        <os>
-                            <type>hvm</type>
-                            <boot dev='cdrom'/>
-                        </os>
-                        <features>
-                            <acpi/>
-                        </features>
-                        <clock offset='utc'/>
-                        <on_poweroff>destroy</on_poweroff>
-                        <on_reboot>restart</on_reboot>
-                        <on_crash>destroy</on_crash>
-                        <devices>
-                            <emulator>/usr/bin/kvm</emulator>
-                            <disk type="file" device="disk">
-                                <driver name="qemu" type="qcow2"/>
-                                <source file="/home/niels/EXTDrive/VM/{NAME}.qcow2"/>
-                                <target dev="vda" bus="virtio"/>
-                                <address type="pci" domain="0x0000" bus="0x00" slot="0x04" function="0x0"/>
-                                </disk>
-                            <disk type="file" device="cdrom">
-                                <driver name="qemu" type="raw"/>
-                                <source file="/home/niels/Downloads/ubuntu.iso"/>
-                                <target dev="hdc" bus="ide"/>
-                                <readonly/>
-                                <address type="drive" controller="0" bus="1" target="0" unit="0"/>
-                            </disk>
-                            <interface type='bridge'>
-                            <source bridge='virbr0'/>
-                            <mac address="00:00:00:00:00:00"/>
-                            </interface>
-                            <controller type="ide" index="0">
-                            <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x1"/>
-                            </controller>
-                            <input type='mouse' bus='ps2'/>
-                            <graphics type='vnc' port='-1' autoport="yes" listen='0.0.0.0'/>
-                            <console type='pty'>
-                            <target port='0'/>
-                            </console>
-                        </devices>
-                        </domain>""".format(
-                            NAME = vm.Name,
-                            MEMORY = vm.RAMAmount,
-                            CPU = vm.CPUCores,
-                            UUID = vm.VMID
-                        )
-    
-    conn = libvirt.open()
-    conn.createXML(vmTemplate)
-    
+    # XML file to parse
+    xml = 'vmTemplate.xml'
 
+    # Parse XML file
+    tree = ET.parse(str(xml))
+    root = tree.getroot()
+
+    # Indexing of all necessary parents
+    root2 = tree.find('devices')
+    root3 = root2.find('interface')
+    root4 = root3.find('source')
+
+    # Change VM name
+    nameroot = tree.find('name')
+    nameroot.text = str(name)
+
+    # Change uuid
+    uniqueid = uuid.uuid4()                 # Generate random uuid
+    uuidroot = tree.find('uuid')
+    uuidroot.text = str(uniqueid)
+
+    # Change mem size
+    mroot = tree.find('memory')
+    mroot.text = str(ram)
+    mroot2 = tree.find('currentMemory')
+    mroot2.text = str(ram)
+
+    # Change number of vcpu's
+    vcpuroot = tree.find('vcpu')            # Tree.find has to be used here bcause there's no parent? 
+    vcpuroot.text = str(cores)
+
+    # Change disk image name accordingly
+    imagepath = '/home/jurrewolff/Desktop/images/disk.img'
+    imagepath = imagepath.replace('disk', str(nameroot.text))
+    root2[1][1].set('file', str(imagepath))
+
+    # Change iso file (This one is the right way)
+    isopath = '/home/jurrewolff/Desktop/iso/linuxmint-18.2-cinnamon-64bit.iso' # LET OP! OS MOET NOG IN DE FORM WORDEN GEVRAAGD! VERVANG DAN LINUXMINT NAAR 'os'!
+    isopath = isopath.replace('os', str(os))
+    root2[2][1].set('file', str(isopath))
+
+    # Change value of network interface
+    root4.set('bridge', 'virbr0')           # Bridges have to be automized!
+
+    # Write changes to XML file
+    tree.write('vmTemplate.xml')
+
+    # Reparse for updated file 
+    tree = ET.parse(str(xml))
+    root = tree.getroot()
+
+    # Convert the bytestream 'root' to workable string
+    xmlbyte = ET.tostring(root, encoding="us-ascii", method="xml")
+    xmlstr = xmlbyte.decode()
+
+    # Send the string to libvirt
+    conn = libvirt.open()
+    conn.createXML(xmlstr)
+    
     return ""
