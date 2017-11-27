@@ -11,4 +11,4 @@ class NewVMForm(forms.Form):
 class UpdateUserForm(forms.Form):
     class Meta(forms.ModelForm):
         model = UserInfo
-        fields = ["name", "surname", "birthdate"]
+        fields = ["name", "surname", "birthdate", "iban", "adres", "postalcode", "phonenumber", "company", "country"]

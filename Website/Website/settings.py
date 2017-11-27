@@ -126,6 +126,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# Media
+MEDIA_URL = '/uploads/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 
 # url to redirect after successfull login
 LOGIN_REDIRECT_URL = '/dashboard'

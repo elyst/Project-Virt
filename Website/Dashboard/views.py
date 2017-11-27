@@ -54,5 +54,5 @@ def accountInfo(request):
         userinf.save()
 
     return render(request, "Dashboard/AccountInfo.html", {
-        "info": userinf
+        "user": userinf
     })
