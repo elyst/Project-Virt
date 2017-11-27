@@ -16,7 +16,7 @@ def index(request):
 
 @login_required
 def myVM(request):
-    return start_VM(request)
+    return HttpResponse("501 Not Implemented")
 
 @login_required
 def createVM(request):
@@ -45,6 +45,7 @@ def start_VM(request):
 
 @login_required
 def accountInfo(request):
+<<<<<<< HEAD
     # Try to retrieve user info, if failed: create UserInfo 
     try:
         userinf = UserInfo.objects.get(user = request.user)
@@ -63,3 +64,9 @@ def editAccountInfo(request):
     return render (request, "Dashboard/EditAccountInfo.html", {
         "form": "hey"
     })
+=======
+    return HttpResponse("501 Not Implemented")
+      
+
+      
+>>>>>>> 97b83265413f5f559c5cc0369689521fcac7943c

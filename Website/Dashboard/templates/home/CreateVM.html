@@ -1,0 +1,50 @@
+{% extends "dashboard.html" %}{% load bootstrap3 %} {% load static %} {% bootstrap_css %} {% block pagename %}create{% endblock %} {% block sub-content %}
+<legend class="text-center" style="margin-top:10px;">Create Virtual Machine</legend>
+
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading">Create Droplet</div>
+        <div class="panel-body">
+            <form action="/dashboard/vm-create/" method="post">
+                <div class="form-group">
+                    {% csrf_token %} {% for field in form %}
+
+                    <div class="col-lg-12">
+                        <div class="row">
+
+                            {% bootstrap_field field show_help=False %} </div></div>{% endfor %}
+                    <div class="col-lg-12 text-center">
+                        <div class="btn-group" data-toggle="buttons">
+                            <label class="ubuntu btn btn-sq-lg btn-primary active">
+        <input type="radio" name="options" id="option1" autocomplete="off" checked>
+        <i class="fa fa-linux fa-5x"></i>
+        <br/>
+        <br/> Ubuntu Server
+
+      </label>
+                            <label class="windows btn btn-sq-lg btn-primary">
+        <input type="radio" name="options" id="option2" autocomplete="off">
+        <i class="fa fa-windows fa-5x"></i>
+        <br/>
+        <br/> Windows Server
+
+      </label>
+                            <label class="apple btn btn-sq-lg btn-primary">
+        <input type="radio" name="options" id="option3" autocomplete="off">
+        <i class="fa fa-apple fa-5x"></i>
+        <br/>
+        <br/> Apple Server
+      </label></div>
+                    </div>
+                    <div class="col-lg-12 text-center" style="margin-top:50px;">
+                        <button type="submit" class="btn btn-lg btn-primary">Create Virtual Machine</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+        <div class="panel-footer">Copyright © Team 1</div>
+    </div>
+</div>
+
+{% endblock %}

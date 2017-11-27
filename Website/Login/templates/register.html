@@ -1,18 +1,20 @@
 {% extends "base.html" %} {% block content %} {%load static %}
 
-<link rel="stylesheet" type="text/css" href="{% static 'login/index.css' %}" /> {% load bootstrap3 %} {% bootstrap_css %} {% bootstrap_javascript %}
-
+{% load bootstrap3 %} {% bootstrap_css %} {% bootstrap_javascript %}
+<script src='https://www.google.com/recaptcha/api.js'></script>
 <link rel="stylesheet" type="text/css" href="{% static 'login/login.css' %}">
-<div class="error-message text-center">
-  {% bootstrap_form_errors form %}
-</div>
-<div class="error-message text-center">
-    {{test}}
-  </div>
+  <div class="error-message text-center">
+      {% if messages %}
+      {% for message in messages %}
+      <div class="alert alert-danger alert-dismissable fade in">{{ message }}
+          <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+      </div>
+    {% endfor %}
+    {% endif %}
 <div class="col-xs-12 col-s-12">
   <div class="wrapper">
     <div class="form-signin">
-      <form method="post">
+      <form class="text-left" method="post">
         <h1 align="center">Register</h1> &nbsp {% csrf_token %} {% for field in form %}
 
         <div class="form-group">
@@ -22,6 +24,7 @@
 
 
         {% endfor %}
+        <div class="g-recaptcha" data-sitekey="6LfNuBkUAAAAABH-4dUejkQjhEhsbGFhQKLjypc5"></div>
 
         <hr>
         <div class="form-actions">

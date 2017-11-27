@@ -149,3 +149,13 @@ nav:hover .forAnimate{
 section{
     padding-left: 15px;
 }
+
+.center_div {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;  
+  }
+  .jumbotron {
+    background-color:#222 !important; 
+}
