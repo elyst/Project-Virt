@@ -56,3 +56,10 @@ def accountInfo(request):
     return render(request, "Dashboard/AccountInfo.html", {
         "user": userinf
     })
+
+@login_required
+def editAccountInfo(request):
+
+    return render (request, "Dashboard/EditAccountInfo.html", {
+        "form": "hey"
+    })

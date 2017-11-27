@@ -6,5 +6,6 @@ urlpatterns = [
     url(r'^$', views.index),
     url(r'my-vm/$', views.myVM),
     url(r'^vm-create/$', views.createVM),
-    url(r'^account/$', views.accountInfo)
+    url(r'^account/$', views.accountInfo),
+    url(r'^account/edit/$', views.editAccountInfo)
 ]
