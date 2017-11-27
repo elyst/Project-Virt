@@ -27,14 +27,14 @@ def createNewVM(request, name, cores, ram, storage):
     vm.save()
 
     os.system(
-        "sudo qemu-img create -f qcow2 /Users/john/Documents/vm_images/{NAME}.qcow2 {SIZE}G".format(
+        "sudo qemu-img create -f qcow2 /home/jurrewolff/Desktop/images/{NAME}.qcow2 {SIZE}G".format(
             NAME = vm.Name,
             SIZE = vm.DISKSize
         )
     )
 
     os.system(
-        "qemu-img resize /Users/john/Documents/vm_images/{NAME}.qcow2 +{SIZE}G".format(
+        "qemu-img resize /home/jurrewolff/images/{NAME}.qcow2 +{SIZE}G".format(
             NAME = vm.Name,
             SIZE = vm.DISKSize
         )
@@ -72,7 +72,7 @@ def createNewVM(request, name, cores, ram, storage):
     vcpuroot.text = str(cores)
 
     # Change disk image name accordingly
-    imagepath = '/home/jurrewolff/Desktop/images/disk.img'
+    imagepath = '/home/jurrewolff/Desktop/images/disk.qcow2'
     imagepath = imagepath.replace('disk', str(nameroot.text))
     root2[1][1].set('file', str(imagepath))
 
@@ -84,11 +84,6 @@ def createNewVM(request, name, cores, ram, storage):
     # Change value of network interface
     root4.set('bridge', 'virbr0')           # Bridges have to be automized!
 
-    # Write changes to XML file
-    tree.write('vmTemplate.xml')
-
-    # Reparse for updated file 
-    tree = ET.parse(str(xml))
     root = tree.getroot()
 
     # Convert the bytestream 'root' to workable string
