@@ -1,0 +1,40 @@
+.infoHeader {
+    display: flex;
+    flex-direction: row;
+}
+
+.infoHeader .profile img{
+    width: 200px;
+    height: 200px;
+    align-self: center;
+    widht: 100vw;
+}
+
+.infoHeader .username {
+    font-size: 40px;
+    align-self: right;
+    width: 100vw;
+}
+
+.info h1 {
+    border-bottom: 1px solid black;
+    padding-bottom: 2px;
+}
+
+.info .col-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.info .col {
+    display: flex;
+    flex-direction: column;
+}
+
+.info .col2 {
+    margin-left: 10em;
+}
+
+.info .infofield {
+    font-size: 22px;
+}

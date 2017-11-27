@@ -1,0 +1,65 @@
+{% extends "dashboard.html" %}
+{% load bootstrap3 %}
+{% load static %}
+
+{% bootstrap_css %}
+
+{% block pagename %}
+    Account Info
+{% endblock %}
+
+{% block sub-content %}
+<div class="container-fluid">
+    <link rel="stylesheet" href="{% static 'Account/AccountInfo.css' %}">
+    <div class="infoHeader row">
+        <div class="row d-flex flex-row profile">
+            <img src="{{ user.profilepic.url }}" alt="No Profile Picture Found">
+        </div>
+        <div class="username">
+            Hey there, {{ user.name }} {{ user.insertion }} {{ user.surname }}
+        </div>
+        <div class="editbutton">
+            <button class="btn btn-success">Edit Account</button>
+        </div>
+    </div>
+    <div class="row info">
+        <h1>Persoonlijke Informatie</h1>
+        <div class="col-container">
+            <div class="col">
+                <span class="infofield">
+                    <b>Volledige Naam:</b> {{ user.name }} {{ user.insertion }} {{ user.surname }}
+                </span>
+                <span class="infofield">
+                    <b>Geboorte Datum:</b> {{ user.birthdate }}
+                </span>
+                <span class="infofield">
+                    <b>Straat & Huisnummer:</b> {{ user.adres }}
+                </span>
+            </div>
+            <div class="col col2">
+                <span class="infofield">
+                    <b>Postcode:</b> {{ user.postalcode }}
+                </span>
+                <span class="infofield">
+                    <b>Telefoonnummer</b> {{ user.phonenumber }}
+                </span>
+                <span class="infofield">
+                    <b>Land:</b> {{ user.country }}
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="row info">
+        <h1>Zakelijke Informatie</h1>
+        <div class="col">
+            <span class="infofield">
+                <b>Bedrijsnaam:</b> {{ user.company }}
+            </span>
+            <span class="infofield">
+                <b>IBAN:</b> {{ user.iban }}
+            </span>
+        </div>
+    </div>
+    
+</div>
+{% endblock %}
