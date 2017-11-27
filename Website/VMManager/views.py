@@ -82,7 +82,7 @@ def createNewVM(request, name, cores, ram, storage):
     root2[2][1].set('file', str(isopath))
 
     # Change value of network interface
-    root4.set('bridge', 'virbr0')           # Bridges have to be automized!
+    root4.set('bridge', 'virbr0')
 
     root = tree.getroot()
 
