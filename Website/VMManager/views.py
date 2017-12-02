@@ -9,6 +9,11 @@ import uuid
 import libvirt
 import os
 
+# Create your views here.
+def index(request):
+    # createNewVM("Name", 2, 500000, 30)
+    return HttpResponse("VMManager works")
+
 @login_required
 def createNewVM(request, name, cores, ram, storage, os_choice):
     
