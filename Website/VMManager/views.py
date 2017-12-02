@@ -9,27 +9,26 @@ import uuid
 import libvirt
 import os
 
-# Create your views here.
-def index(request):
-    # createNewVM("Name", 2, 500000, 30)
-    return HttpResponse("VMManager works")
-
 @login_required
 def createNewVM(request, name, cores, ram, storage, os_choice):
-
+    
+    #Initialise VM model
     vm = VirtualMachine()
-
+    
+    #Save VM information
     vm.Name = name
     vm.User = request.user
     vm.VMID = uuid.uuid4()
     vm.CPUCores = cores
     vm.RAMAmount = ram
     vm.DISKSize = storage
-
+    
+    #Check for duplicate names in Database
     if duplicates('Name', name) != True:
         messages.error(request, 'Er bestaat al een VM met deze naam.')
         return False
     
+    #If everything ok, save VM
     vm.save() 
         
     os.system(
@@ -110,12 +109,9 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     messages.success(request, 'Your VM has been created.')
     return True
 
-def destroyVM(name):
-    
-    return ""
-
 def duplicates(field, name):
     field = field + '__iexact'
+    #PYLINT REGISTERS AN ERROR OVER HERE. JUST IGNORE THAT, IT IS NO ERROR
     data = VirtualMachine.objects.filter(**{ field: name })
     count = 0
     for each in data:

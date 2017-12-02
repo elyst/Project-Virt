@@ -7,7 +7,7 @@ from VMManager.views import createNewVM
 
 #COPY OS PATH OVER HERE
 
-OS = ['LINUX', 'WINDOWS', 'APPLE']
+OS = ['/LINUX', '/WINDOWS', '/APPLE']
 
 
 # Create your views here.
