@@ -1,6 +1,14 @@
 {% extends "dashboard.html" %}{% load bootstrap3 %} {% load static %} {% bootstrap_css %} {% block pagename %}create{% endblock %} {% block sub-content %}
 <legend class="text-center" style="margin-top:10px;">Create Virtual Machine</legend>
-
+<div class="error-message text-center">
+        {% if messages %}
+        {% for message in messages %}
+        <div class= 'alert alert-{{ alert }} alert-dismissable fade in'>{{ message }}
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        </div>
+      {% endfor %}
+      {% endif %}
+    </div>
 <div class="container">
     <div class="panel panel-default">
         <div class="panel-heading">Create Droplet</div>
@@ -16,21 +24,21 @@
                     <div class="col-lg-12 text-center">
                         <div class="btn-group" data-toggle="buttons">
                             <label class="ubuntu btn btn-sq-lg btn-primary active">
-        <input type="radio" name="options" id="option1" autocomplete="off" checked>
+        <input type="radio" name="options" value= "1" id="option1" autocomplete="off" checked>
         <i class="fa fa-linux fa-5x"></i>
         <br/>
         <br/> Ubuntu Server
 
       </label>
                             <label class="windows btn btn-sq-lg btn-primary">
-        <input type="radio" name="options" id="option2" autocomplete="off">
+        <input type="radio" name="options" value= "2" id="option2" autocomplete="off">
         <i class="fa fa-windows fa-5x"></i>
         <br/>
         <br/> Windows Server
 
       </label>
                             <label class="apple btn btn-sq-lg btn-primary">
-        <input type="radio" name="options" id="option3" autocomplete="off">
+        <input type="radio" name="options" value= "3" id="option3" autocomplete="off">
         <i class="fa fa-apple fa-5x"></i>
         <br/>
         <br/> Apple Server

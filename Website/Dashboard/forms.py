@@ -20,3 +20,4 @@ class NewVMForm(forms.Form):
     CPUCores = forms.IntegerField(label="CPU Cores", widget=forms.Select(choices=CPU_Choices))
     RAMAmount = forms.IntegerField(label="Amount of RAM", widget=forms.Select(choices=RAM_Choices))
     DiskSize = forms.IntegerField(label="Disk Size", widget=forms.Select(choices=Disk_Choices))
+    
