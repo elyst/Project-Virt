@@ -133,7 +133,7 @@ def duplicates(field, name, counter):
     return True
 
 def maximum(user):
-    data = VirtualMachine.objects.all().filter(User__exact=user)
+    data = VirtualMachine.objects.filter(User__exact=user)
     count = 0
     test = []
     for each in data:
