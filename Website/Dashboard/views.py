@@ -5,7 +5,7 @@ from django.contrib import messages
 from . import forms
 from VMManager.views import createNewVM
 
-#COPY OS PATH OVER HERE
+#COPY OS PATH OVER HERE !!!!!!!!!
 
 OS = ['/LINUX', '/WINDOWS', '/APPLE']
 

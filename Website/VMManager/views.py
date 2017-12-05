@@ -2,6 +2,7 @@ from django.shortcuts import render, HttpResponse, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import Sum, Count
 
 from .models import VirtualMachine
 import xml.etree.ElementTree as ET
@@ -29,10 +30,15 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     vm.DISKSize = storage
     
     #Check for duplicate names in Database
-    if duplicates('Name', name) != True:
-        messages.error(request, 'Er bestaat al een VM met deze naam.')
+    if duplicates('Name', name, 1) != True:
+        messages.error(request, 'A Virtual Machine with this name already exists')
         return False
-    
+
+    #Check if user reached maximum amount of ram
+    if maximum(str(request.user)) != True:
+        messages.error(request, 'You have reached the maximum amount of Virtual Machines')
+        return False
+
     #If everything ok, save VM
     vm.save() 
         
@@ -114,7 +120,7 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     messages.success(request, 'Your VM has been created.')
     return True
 
-def duplicates(field, name):
+def duplicates(field, name, counter):
     field = field + '__iexact'
     #PYLINT REGISTERS AN ERROR OVER HERE. JUST IGNORE THAT, IT IS NO ERROR
     data = VirtualMachine.objects.filter(**{ field: name })
@@ -122,6 +128,17 @@ def duplicates(field, name):
     for each in data:
         count += 1
     
-    if count >= 1:
+    if count >= counter:
         return False
+    return True
+
+def maximum(user):
+    data = VirtualMachine.objects.all().filter(User__exact=user)
+    count = 0
+    test = []
+    for each in data:
+        count += each.RAMAmount
+
+    if count > 8000000:
+        return False    
     return True
