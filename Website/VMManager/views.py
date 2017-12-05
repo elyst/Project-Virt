@@ -1,7 +1,10 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, redirect
 from django.views.decorators.csrf import csrf_exempt
-from .models import VirtualMachine
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.db.models import Sum, Count
 
+from .models import VirtualMachine
 import xml.etree.ElementTree as ET
 import uuid
 import libvirt
@@ -12,20 +15,33 @@ def index(request):
     # createNewVM("Name", 2, 500000, 30)
     return HttpResponse("VMManager works")
 
-def createNewVM(request, name, cores, ram, storage):
-    if not request.user.is_authenticated():
-        return
-
+@login_required
+def createNewVM(request, name, cores, ram, storage, os_choice):
+    
+    #Initialise VM model
     vm = VirtualMachine()
-
+    
+    #Save VM information
     vm.Name = name
+    vm.User = request.user
     vm.VMID = uuid.uuid4()
     vm.CPUCores = cores
     vm.RAMAmount = ram
     vm.DISKSize = storage
+    
+    #Check for duplicate names in Database
+    if duplicates('Name', name, 1) != True:
+        messages.error(request, 'A Virtual Machine with this name already exists')
+        return False
 
-    vm.save()
+    #Check if user reached maximum amount of ram
+    if maximum(str(request.user)) != True:
+        messages.error(request, 'You have reached the maximum amount of Virtual Machines')
+        return False
 
+    #If everything ok, save VM
+    vm.save() 
+        
     os.system(
         "sudo qemu-img create -f qcow2 /Users/john/Documents/vm_images/{NAME}.qcow2 {SIZE}G".format(
             NAME = vm.Name,
@@ -77,8 +93,8 @@ def createNewVM(request, name, cores, ram, storage):
     root2[1][1].set('file', str(imagepath))
 
     # Change iso file (This one is the right way)
-    isopath = '/home/jurrewolff/Desktop/iso/linuxmint-18.2-cinnamon-64bit.iso' # LET OP! OS MOET NOG IN DE FORM WORDEN GEVRAAGD! VERVANG DAN LINUXMINT NAAR 'os'!
-    isopath = isopath.replace('os', str(os))
+    isopath = os_choice # LET OP! OS MOET NOG IN DE FORM WORDEN GEVRAAGD! VERVANG DAN LINUXMINT NAAR 'os'!
+    isopath = isopath.replace('os', str(os_choice))
     root2[2][1].set('file', str(isopath))
 
     # Change value of network interface
@@ -98,10 +114,31 @@ def createNewVM(request, name, cores, ram, storage):
     # Send the string to libvirt
     conn = libvirt.open()
     conn.createXML(xmlstr)
-    
 
-    return ""
 
-def destroyVM(name):
     
-    return ""
+    messages.success(request, 'Your VM has been created.')
+    return True
+
+def duplicates(field, name, counter):
+    field = field + '__iexact'
+    #PYLINT REGISTERS AN ERROR OVER HERE. JUST IGNORE THAT, IT IS NO ERROR
+    data = VirtualMachine.objects.filter(**{ field: name })
+    count = 0
+    for each in data:
+        count += 1
+    
+    if count >= counter:
+        return False
+    return True
+
+def maximum(user):
+    data = VirtualMachine.objects.all().filter(User__exact=user)
+    count = 0
+    test = []
+    for each in data:
+        count += each.RAMAmount
+
+    if count > 8000000:
+        return False    
+    return True
