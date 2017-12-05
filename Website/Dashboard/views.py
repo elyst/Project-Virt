@@ -13,6 +13,8 @@ OS = ['/LINUX', '/WINDOWS', '/APPLE']
 # Create your views here.
 @login_required
 def index(request):
+    user = str(request.user)
+    
     return render(request, 'home/home.html')
 
 @login_required
