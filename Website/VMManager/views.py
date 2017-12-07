@@ -35,7 +35,7 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
         return False
 
     #Check if user reached maximum amount of ram
-    if maximum(str(request.user)) != True:
+    if maximum(str(request.user), ram) != True:
         messages.error(request, 'You have reached the maximum amount of Virtual Machines')
         return False
 
@@ -132,13 +132,14 @@ def duplicates(field, name, counter):
         return False
     return True
 
-def maximum(user):
+def maximum(user, ram):
+    #PYLINT REGISTERS AN ERROR OVER HERE. JUST IGNORE THAT, IT IS NO ERROR
     data = VirtualMachine.objects.filter(User__exact=user)
     count = 0
     test = []
     for each in data:
         count += each.RAMAmount
-
+    count = count + ram
     if count > 8000000:
         return False    
     return True
