@@ -22,7 +22,7 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     vm = VirtualMachine()
     
     #Save VM information
-    vm.Name = name
+    vm.Name = name.replace(" ", "-")
     vm.User = request.user
     vm.VMID = uuid.uuid4()
     vm.CPUCores = cores

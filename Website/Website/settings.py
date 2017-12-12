@@ -34,8 +34,6 @@ EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASSWORD')
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'Plop Team <noreply@example.com>'
 
-#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
