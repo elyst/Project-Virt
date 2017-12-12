@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'Dashboard',
     'VMManager',
     'Login',
+    'Logger',
     'Website',
     'django.contrib.admin',
     'django.contrib.auth',
