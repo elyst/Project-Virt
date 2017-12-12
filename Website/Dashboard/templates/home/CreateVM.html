@@ -1,5 +1,10 @@
 {% extends "dashboard.html" %}{% load bootstrap3 %} {% load static %} {% bootstrap_css %} {% block pagename %}create{% endblock %} {% block sub-content %}
-<legend class="text-center" style="margin-top:10px;">Create Virtual Machine</legend>
+<ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="/dashboard">Dashboard</a>
+        </li>
+        <li class="breadcrumb-item active">Create Virtual Machine</li>
+      </ol>
 <div class="error-message text-center">
         {% if messages %}
         {% for message in messages %}
@@ -11,7 +16,7 @@
     </div>
 <div class="container">
     <div class="panel panel-default">
-        <div class="panel-heading">Create Droplet</div>
+        <div class="panel-heading">Create Virtual Machine</div>
         <div class="panel-body">
             <form action="/dashboard/vm-create/" method="post">
                 <div class="form-group">
