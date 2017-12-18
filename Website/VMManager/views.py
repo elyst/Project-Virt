@@ -193,7 +193,7 @@ def VMstate(user):
     userIterator = VirtualMachine.objects.values('Name') # Iterates through names of users vms ?creates tuple inside of a list?
     vmlist = 0
 
-    print(userIterator[0][0])
+    print(userIterator)
 
     for VMname in userIterator:
         if VMname.state() == [1, 1]:
