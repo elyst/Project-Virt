@@ -4,6 +4,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, Count
 
+from Logger.views import *
+
 from .models import VirtualMachine
 import xml.etree.ElementTree as ET
 import uuid
@@ -32,11 +34,13 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     #Check for duplicate names in Database
     if duplicates('Name', name, 1) != True:
         messages.error(request, 'A Virtual Machine with this name already exists')
+        LogWarning(request.user.id, "User Created VM with already existing name")
         return False
 
     #Check if user reached maximum amount of ram
     if maximum(str(request.user), ram) != True:
         messages.error(request, 'You have reached the maximum amount of Virtual Machines')
+        LogWarning(request.user.id, "User tried to create a VM with too much ram")
         return False
 
     #If everything ok, save VM
@@ -115,7 +119,7 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     conn = libvirt.open()
     conn.createXML(xmlstr)
 
-
+    LogInfo(request.id.user, "User successfully created a VM")
     
     messages.success(request, 'Your VM has been created.')
     return True

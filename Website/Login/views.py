@@ -16,6 +16,7 @@ from Logger.views import *
 
 def signUpRequest(request):
     if request.user.is_authenticated():
+        LogInfo(request.user.id, "User Already Logged In")
         return redirect('/dashboard')
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -33,9 +34,11 @@ def signUpRequest(request):
                 username = form.cleaned_data.get('username')
                 raw_password = form.cleaned_data.get('password1')
                 messages.success(request, 'Thanks for registration, you can now log in!')
+                LogInfo(request.user.id, "User Succesfully Logged In")
                 return redirect("/login")
             else:
                 messages.error(request, 'Invalid reCAPTCHA. Please try again.')
+                LogWarning(request.user.id, "User Inputted Invalid Captcha")
                 return render(request, 'register.html', {'form': form})
     else:
         form = SignUpForm()
