@@ -1,8 +1,8 @@
 <domain type="kvm">
-<name>kaasstengel</name>
-<uuid>158fe277-ec83-444e-9713-8d84a9edd90c</uuid>
-<memory>300000</memory>
-<currentMemory>300000</currentMemory>
+<name>Vm3</name>
+<uuid>1c72dbea-337c-4fed-9366-4b2ee54902e0</uuid>
+<memory>1000000</memory>
+<currentMemory>1000000</currentMemory>
 <vcpu>1</vcpu>
 <os>
 <type>hvm</type>
@@ -14,12 +14,12 @@
 <clock offset="utc" />
 <on_poweroff>destroy</on_poweroff>
 <on_reboot>restart</on_reboot>
-<on_crash>destroy</on_crash>
+<on_crash>restart</on_crash>
 <devices>
 <emulator>/usr/bin/kvm</emulator>
 <disk device="disk" type="file">
 <driver name="qemu" type="raw" />
-<source file="/home/jurrewolff/Desktop/images/kaasstengel.img" />
+<source file="/home/jurrewolff/Desktop/images/Vm3.qcow2" />
 <target bus="virtio" dev="vda" />
 <address bus="0x00" domain="0x0000" function="0x0" slot="0x04" type="pci" />
 </disk>

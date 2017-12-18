@@ -9,6 +9,7 @@ class VirtualMachine(models.Model):
     CPUCores = models.IntegerField()
     RAMAmount = models.IntegerField()
     DISKSize = models.IntegerField()
-    
+    State = models.CharField(default="running", max_length= 50)
+    Date = models.DateTimeField(auto_now_add=True)
 
 admin.site.register(VirtualMachine)
