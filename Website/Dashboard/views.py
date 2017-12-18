@@ -27,7 +27,6 @@ def myVM(request):
     if request.method == "GET":
         
         data = VirtualMachine.objects.filter(User__exact=user)  # Get database data for currently logged in user
-
         return render(request, 'home/myVM.html', {'data': data})
 
     elif request.method == "POST":
