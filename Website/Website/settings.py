@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -23,6 +25,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = 'dpd0q#srqwfsf2v4vsnu24n*n5z*)rt3mrwq1bp-t**5x6r8!k'
 GOOGLE_RECAPTCHA_SECRET_KEY = os.environ.get('GOOGLE_RECAPTCHA_SECRET_KEY')
+
+# Setting Email information
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ.get('GMAIL')
+EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASSWORD')
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'Plop Team <noreply@example.com>'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -37,6 +47,7 @@ INSTALLED_APPS = [
     'Dashboard',
     'VMManager',
     'Login',
+    'Logger',
     'Website',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -132,3 +143,8 @@ STATIC_URL = '/static/'
 # url to redirect after successfull login
 LOGIN_REDIRECT_URL = '/dashboard'
 LOGIN_URL='/login'
+
+# Set login session timeout to 1 hour
+SESSION_COOKIE_AGE = 3600
+
+

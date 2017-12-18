@@ -12,6 +12,8 @@ from django.contrib.auth.views import login
 from Login.forms import SignUpForm  
 from django.http import HttpResponseRedirect
 
+from Logger.views import *
+
 def signUpRequest(request):
     if request.user.is_authenticated():
         return redirect('/dashboard')

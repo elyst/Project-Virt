@@ -18,7 +18,18 @@ OS = ['/home/jurrewolff/Desktop/iso/linuxmint-18.2-cinnamon-64bit.iso', '/WINDOW
 # Create your views here.
 @login_required
 def index(request):
-    return render(request, 'home/home.html')
+    user = str(request.user)
+    data = VirtualMachine.objects.filter(User__exact=user)
+    ram_count = 0
+    vm_count = 0
+    for value in data:
+        vm_count += 1
+        ram_count += value.RAMAmount
+
+    ram_count = (8000000 - ram_count) / 1000000
+    ram_count = str(ram_count) + ' GB'
+    
+    return render(request, 'home/home.html', {'ram_count' : ram_count, 'vm_count': vm_count})
 
 @login_required
 def myVM(request):
