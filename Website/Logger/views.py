@@ -3,23 +3,22 @@ from django.shortcuts import render
 from .models import Entry
 
 # Create your views here.
-def LogInfo(message):
-    e = Entry()
-    e.message = message
-    e.severity = "Info"
-    e.save()
+def LogInfo(uid, message):
+    Log("Warning", uid, message)
     return
 
-def LogWarning(message):
-    e = Entry()
-    e.message = message
-    e.severity = "Warning"
-    e.save()
+def LogWarning(uid, message):
+    Log("Warning", uid, message)
     return
 
-def LogError(message):
+def LogError(uid, message):
+    Log("Error", uid, message)
+    return
+
+def Log(level, userid, message):
     e = Entry()
+    e.userid = userid
     e.message = message
-    e.severity = "Error"
+    e.severity = level
     e.save()
     return
