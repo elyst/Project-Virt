@@ -4,7 +4,7 @@ from .models import Entry
 
 # Create your views here.
 def LogInfo(uid, message):
-    Log("Warning", uid, message)
+    Log("Info", uid, message)
     return
 
 def LogWarning(uid, message):
