@@ -45,8 +45,8 @@ def createVM(request):
         form = forms.NewVMForm(request.POST)
         
         #Generate random ssh user
-        ssh_user = generateRandChar()
-        rand_password = generateRandChar()
+        ssh_user = generateRandChar(5)
+        rand_password = generateRandChar(8)
 
         #Check which os has been chosen
         options = request.POST.get("options", None)
@@ -90,8 +90,8 @@ def sendMail(request, ssh_user, temp_password):
     email.send()
       
 #Generate a random set of chars
-def generateRandChar():
-    return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(7))
+def generateRandChar(amount):
+    return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(amount))
           
 
       
