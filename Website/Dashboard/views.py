@@ -12,7 +12,7 @@ import re
 
 #COPY OS PATH OVER HERE !!!!!!!!!
 
-OS = ['/home/jurrewolff/Desktop/iso/linuxmint-18.2-cinnamon-64bit.iso', '/WINDOWS', '/APPLE']
+OS = ['/home/jurrewolff/Desktop/iso/ubuntu-16.04.3-server-amd64.iso', '/home/jurrewolff/Desktop/iso/linuxmint-18.2-cinnamon-64bit.iso', '/APPLE']
 
 
 # Create your views here.
@@ -36,8 +36,8 @@ def myVM(request):
     user = request.user
     # Prepare data for vm list
     if request.method == "GET":
-        
-        data = VirtualMachine.objects.filter(User__exact=user)  # Get database data for currently logged in user
+        VMstate(user)
+        data = VirtualMachine.objects.filter(User__exact=user)  # Get database data for currently logged in user  
         return render(request, 'home/myVM.html', {'data': data})
 
     elif request.method == "POST":
@@ -60,9 +60,11 @@ def myVM(request):
         elif request.POST.get("deleteVM", None):
             name = request.POST.get("deleteVM", None)
             print("deletetet")
-            deleteVM(name)    
+            deleteVM(name) 
 
+        VMstate(user)
         data = VirtualMachine.objects.filter(User__exact=user)
+        
        
         return render(request, 'home/myVM.html', {'data': data})
 

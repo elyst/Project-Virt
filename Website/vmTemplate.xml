@@ -1,6 +1,6 @@
 <domain type="kvm">
-<name>Vm3</name>
-<uuid>1c72dbea-337c-4fed-9366-4b2ee54902e0</uuid>
+<name>Ubuntu</name>
+<uuid>9816b436-1f06-4929-8765-37d48b1e18b4</uuid>
 <memory>1000000</memory>
 <currentMemory>1000000</currentMemory>
 <vcpu>1</vcpu>
@@ -18,14 +18,14 @@
 <devices>
 <emulator>/usr/bin/kvm</emulator>
 <disk device="disk" type="file">
-<driver name="qemu" type="raw" />
-<source file="/home/jurrewolff/Desktop/images/Vm3.qcow2" />
+<driver name="qemu" type="qcow2" />
+<source file="/home/jurrewolff/Desktop/images/Ubuntu.qcow2" />
 <target bus="virtio" dev="vda" />
 <address bus="0x00" domain="0x0000" function="0x0" slot="0x04" type="pci" />
 </disk>
 <disk device="cdrom" type="file">
 <driver name="qemu" type="raw" />
-<source file="/home/jurrewolff/Desktop/iso/linuxmint-18.2-cinnamon-64bit.iso" />
+<source file="/home/jurrewolff/Desktop/iso/ubuntu-16.04.3-server-amd64.iso" />
 <target bus="ide" dev="hdc" />
 <readonly />
 <address bus="1" controller="0" target="0" type="drive" unit="0" />
