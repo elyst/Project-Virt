@@ -31,7 +31,7 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     vm.DISKSize = storage
     
     #Check for duplicate names in Database
-    if duplicates('Name', name, 1) != True:
+    if duplicates('Name', vm.Name, 1) != True:
         messages.error(request, 'A Virtual Machine with this name already exists')
         return False
 
@@ -71,7 +71,7 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
 
     # Change VM name
     nameroot = tree.find('name')
-    nameroot.text = str(name)
+    nameroot.text = str(vm.Name)
 
     # Change uuid
     uniqueid = uuid.uuid4()                 # Generate random uuid
@@ -191,18 +191,24 @@ def deleteVM(name):
 
 def VMstate(user):
     conn = libvirt.open('qemu:///system')
-    userIterator = VirtualMachine.objects.values('Name') # Iterates through names of users vms ?creates tuple inside of a list?
+    
+
+    # Iterates through names of users vms ?creates tuple inside of a list?
+    data = VirtualMachine.objects.filter(User__exact=user)
     vmlist = 0
 
-    print(userIterator)
-
-    for VMname in userIterator:
-        if VMname.state() == [1, 1]:
-            VMname.State = 'Running'
-            VMname.save()
-        elif VMname.state == [5, 2]:
-            VMname.State == 'Shut down'
-            VMname.save
-        elif VMname.state() == [3, 1]:
-            VMname.State == 'Suspended'
-            VMname.save()
+    for value in data:
+        dom0 = conn.lookupByName(value.Name)
+        print(dom0.state())
+        if dom0.state() == [1, 1]:
+            value.State = 'Running'
+            print(value.State)
+            value.save()
+        elif dom0.state() == [5, 0] or [5, 2]:
+            value.State = 'Shut down'
+            print(value.State)
+            value.save()
+        elif dom0.state() == [3, 1]:
+            print(value.State)
+            value.State = 'Suspended'
+            value.save()
