@@ -9,6 +9,7 @@ import xml.etree.ElementTree as ET
 import uuid
 import libvirt
 import os
+import time
 
 # Create your views here.
 def index(request):
@@ -30,7 +31,7 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     vm.DISKSize = storage
     
     #Check for duplicate names in Database
-    if duplicates('Name', name, 1) != True:
+    if duplicates('Name', vm.Name, 1) != True:
         messages.error(request, 'A Virtual Machine with this name already exists')
         return False
 
@@ -43,14 +44,14 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     vm.save() 
         
     os.system(
-        "sudo qemu-img create -f qcow2 /Users/john/Documents/vm_images/{NAME}.qcow2 {SIZE}G".format(
+        "sudo qemu-img create -f qcow2 /home/jurrewolff/Desktop/images/{NAME}.qcow2 {SIZE}G".format(
             NAME = vm.Name,
             SIZE = vm.DISKSize
         )
     )
 
     os.system(
-        "qemu-img resize /Users/john/Documents/vm_images/{NAME}.qcow2 +{SIZE}G".format(
+        "qemu-img resize /home/jurrewolff/Desktop/images/{NAME}.qcow2 +{SIZE}G".format(
             NAME = vm.Name,
             SIZE = vm.DISKSize
         )
@@ -70,7 +71,7 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
 
     # Change VM name
     nameroot = tree.find('name')
-    nameroot.text = str(name)
+    nameroot.text = str(vm.Name)
 
     # Change uuid
     uniqueid = uuid.uuid4()                 # Generate random uuid
@@ -88,7 +89,7 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     vcpuroot.text = str(cores)
 
     # Change disk image name accordingly
-    imagepath = '/home/jurrewolff/Desktop/images/disk.img'
+    imagepath = '/home/jurrewolff/Desktop/images/disk.qcow2'
     imagepath = imagepath.replace('disk', str(nameroot.text))
     root2[1][1].set('file', str(imagepath))
 
@@ -113,10 +114,10 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
 
     # Send the string to libvirt
     conn = libvirt.open()
-    conn.createXML(xmlstr)
+    conn.defineXML(xmlstr)
 
 
-    
+
     messages.success(request, 'Your VM has been created.')
     return True
 
@@ -143,3 +144,71 @@ def maximum(user, ram):
     if count > 8000000:
         return False    
     return True
+
+def start(name):
+    # Setup connection to hypervisor
+    conn = libvirt.open('qemu:///system')
+
+    dom0 = conn.lookupByName(name)
+    dom0.create()
+    print(dom0.state())
+
+def stop(name):
+    conn = libvirt.open('qemu:///system')
+
+    dom0 = conn.lookupByName(name)
+    dom0.destroy()
+    print(dom0.state())
+    
+def reboot(name):
+    conn = libvirt.open('qemu:///system')
+
+    dom0 = conn.lookupByName(name)
+    dom0.shutdown()
+    time.sleep(2)
+
+    dom0.start()  
+
+def suspend(name):
+    conn = libvirt.open('qemu:///system')
+
+    dom0 = conn.lookupByName(name)
+    dom0.suspend()
+    print(dom0.state())
+
+def deleteVM(name):
+    conn = libvirt.open('qemu:///system')
+    dom0 = conn.lookupByName(name)
+
+    if dom0.state() == [1, 1]:
+        dom0.destroy()
+    
+    dom0.undefine() # Erases vm from existence (Atleast from kvm's perspective)
+    os.remove('/home/jurrewolff/Desktop/images/{NAME}.qcow2'.format(NAME = name)) # Removes disk
+    
+    instance = VirtualMachine.objects.get(Name = name)
+    instance.delete()   # Deleted entry from database
+
+def VMstate(user):
+    conn = libvirt.open('qemu:///system')
+    
+
+    # Iterates through names of users vms ?creates tuple inside of a list?
+    data = VirtualMachine.objects.filter(User__exact=user)
+    vmlist = 0
+
+    for value in data:
+        dom0 = conn.lookupByName(value.Name)
+        print(dom0.state())
+        if dom0.state() == [1, 1]:
+            value.State = 'Running'
+            print(value.State)
+            value.save()
+        elif dom0.state() == [5, 0] or [5, 2]:
+            value.State = 'Shut down'
+            print(value.State)
+            value.save()
+        elif dom0.state() == [3, 1]:
+            print(value.State)
+            value.State = 'Suspended'
+            value.save()

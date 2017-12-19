@@ -5,13 +5,17 @@ from django.core.mail import EmailMessage
 from django.contrib.auth.models import User
 
 from . import forms
-from VMManager.views import createNewVM
+from VMManager.views import createNewVM, start, stop, reboot, suspend, deleteVM, VMstate # Add defs 
 from VMManager.models import VirtualMachine
 import string, random
 
+import bs4
+import os
+import re
+
 #COPY OS PATH OVER HERE !!!!!!!!!
 
-OS = ['/LINUX', '/WINDOWS', '/APPLE']
+OS = ['/home/jurrewolff/Desktop/iso/ubuntu-16.04.3-server-amd64.iso', '/home/jurrewolff/Desktop/iso/linuxmint-18.2-cinnamon-64bit.iso', '/APPLE']
 
 
 # Create your views here.
@@ -32,13 +36,48 @@ def index(request):
 
 @login_required
 def myVM(request):
-    return HttpResponse("501 Not Implemented")
+    user = request.user
+    # Prepare data for vm list
+    if request.method == "GET":
+        VMstate(user)
+        data = VirtualMachine.objects.filter(User__exact=user)  # Get database data for currently logged in user  
+        return render(request, 'home/myVM.html', {'data': data})
+
+    elif request.method == "POST":
+        if request.POST.get("start", None):
+            name = request.POST.get("start", None)
+            print("start")
+            start(name)
+        elif request.POST.get("stop", None):
+            name = request.POST.get("stop", None)
+            print("stop")
+            stop(name)
+        elif request.POST.get("reboot", None):
+            name = request.POST.get("reboot", None)
+            print("reboot")
+            reboot(name)
+        elif request.POST.get("suspend", None):
+            name = request.POST.get("suspend", None)
+            print("suspend")
+            suspend(name)
+        elif request.POST.get("deleteVM", None):
+            name = request.POST.get("deleteVM", None)
+            print("deletetet")
+            deleteVM(name) 
+
+        VMstate(user)
+        data = VirtualMachine.objects.filter(User__exact=user)
+        
+       
+        return render(request, 'home/myVM.html', {'data': data})
+
 
 @login_required
 def createVM(request):
     if request.method == "GET":
         # Generate form and show CreateVM to the user
         form = forms.NewVMForm()
+
         return render(request, "home/CreateVM.html", {'form': form})
     elif request.method == "POST":
         # Populate, verify and process the input data
@@ -68,10 +107,6 @@ def createVM(request):
         sendMail(request, ssh_user, rand_password)    
 
         return render(request, "home/CreateVM.html", {'alert' : "success", 'form': form})
-
-@login_required
-def start_VM(request):
-    return HttpResponse('Vm is gestart!')
 
 @login_required
 def accountInfo(request):
