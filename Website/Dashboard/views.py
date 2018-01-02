@@ -78,10 +78,6 @@ def createVM(request):
     elif request.method == "POST":
         # Populate, verify and process the input data
         form = forms.NewVMForm(request.POST)
-        
-        #Generate random ssh user
-        ssh_user = generateRandChar(5)
-        rand_password = generateRandChar(8)
 
         #Check which os has been chosen
         options = request.POST.get("options", None)
