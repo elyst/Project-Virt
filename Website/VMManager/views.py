@@ -246,7 +246,7 @@ def sendMail(request, ssh_user, temp_password, ssh_credentials):
     for value in data:
         user_email = value.email
 
-    body = '{} \n {} \n {} to login to the root account with the password. \n !! PLEASE CHANGE YOUR PASSWORD IMMEDIATLY !!.format(ssh_user, temp_password, ssh_credentials)    
+    body = '{} \n {} \n {} to login to the root account with the password. \n !! PLEASE CHANGE YOUR PASSWORD IMMEDIATLY !!'.format(ssh_user, temp_password, ssh_credentials)    
     email = EmailMessage('Credentials VMX Virtual Machine', body, to=[user_email])
     email.send()
       
