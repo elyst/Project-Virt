@@ -100,12 +100,3 @@ def createVM(request):
 @login_required
 def accountInfo(request):
     return HttpResponse("501 Not Implemented")
-
-
-
-
-
-
-
-    
-      
