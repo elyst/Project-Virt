@@ -3,6 +3,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, Count
+from django.contrib.auth.models import User
+from django.core.mail import EmailMessage
 
 from .models import VirtualMachine
 from __future__ import print_function
@@ -12,6 +14,9 @@ import uuid
 import libvirt
 import os
 import time
+import random, string
+import pathlib
+
 
 # Create your views here.
 def index(request):
@@ -117,15 +122,15 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     conn = libvirt.open()
     conn.defineXML(xmlstr)
 
-
-    VMIP(vm.Name)
-
+    #Create new SSH user
+    newSshUser(request, VMIP(vm.Name))
 
     messages.success(request, 'Your VM has been created. \n An email with your credentials has been send!')
     return True
 
 def duplicates(field, name, counter):
     field = field + '__iexact'
+    
     #PYLINT REGISTERS AN ERROR OVER HERE. JUST IGNORE THAT, IT IS NO ERROR
     data = VirtualMachine.objects.filter(**{ field: name })
     count = 0
@@ -216,6 +221,7 @@ def VMstate(user):
             value.save()
 
 def VMIP(VMname):
+    ip_list = []
     conn = libvirt.open('qemu:///system')
     if conn == None:
         print('Failed to open connection to qemu:///system', file=sys.stderr)
@@ -233,11 +239,45 @@ def VMIP(VMname):
         if val['addrs']:
             for ipaddr in val['addrs']:
                 if ipaddr['type'] == libvirt.VIR_IP_ADDR_TYPE_IPV4:
+                    ip_list.append(ipaddr['addr'])
                     print(ipaddr['addr'] + " VIR_IP_ADDR_TYPE_IPV4")
                 elif ipaddr['type'] == libvirt.VIR_IP_ADDR_TYPE_IPV6:
+                    ip_list.append(ipaddr['addr'])
                     print(ipaddr['addr'] + " VIR_IP_ADDR_TYPE_IPV6")
 
     conn.close()
-    exit(0)
-                
-            
+    return ip_list
+
+#Send email with credentials when vm is created
+def sendMail(request, ssh_user, temp_password):
+    current_user = str(request.user)
+    data = User.objects.filter(username__exact=current_user)
+    for value in data:
+        user_email = value.email
+
+    body = '{} \n {} \n'.format(ssh_user, temp_password)    
+    email = EmailMessage('Credentials VMX Virtual Machine', body, to=[user_email])
+    email.send()
+      
+#Generate a random set of chars
+def generateRandChar(amount):
+    return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(amount))
+
+#Create new sshUser for specific VM
+def newSshUser(request, DomainIp):
+    
+    #Initialise new user
+    NewUser = generateRandChar(5)
+    NewPassword = generateRandChar(8)
+    GoPath = os.getenv('GOPATH')
+
+    #Create user directory
+    path = '/{}/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}'.format(GoPath, NewUser)
+    pathlib.Path(path).mkdir(parents=True, exist_ok=True)
+
+    #Create ssh connection credentials
+    f= open("{}/sshpiper_upstream".format(path),"w+")
+    f.write("root@{}:22".format(DomainIp))
+    f.close()
+
+    sendMail(request, NewUser, NewPassword)
