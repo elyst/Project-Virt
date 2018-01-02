@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, Count
 
 from .models import VirtualMachine
+from __future__ import print_function
+import sys
 import xml.etree.ElementTree as ET
 import uuid
 import libvirt
@@ -13,7 +15,6 @@ import time
 
 # Create your views here.
 def index(request):
-    # createNewVM("Name", 2, 500000, 30)
     return HttpResponse("VMManager works")
 
 @login_required
@@ -85,7 +86,7 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     mroot2.text = str(ram)
 
     # Change number of vcpu's
-    vcpuroot = tree.find('vcpu')            # Tree.find has to be used here bcause there's no parent? 
+    vcpuroot = tree.find('vcpu') #Tree.find has to be used here bcause there's no parent?
     vcpuroot.text = str(cores)
 
     # Change disk image name accordingly
@@ -117,8 +118,10 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     conn.defineXML(xmlstr)
 
 
+    VMIP(vm.Name)
 
-    messages.success(request, 'Your VM has been created.')
+
+    messages.success(request, 'Your VM has been created. \n An email with your credentials has been send!')
     return True
 
 def duplicates(field, name, counter):
@@ -191,7 +194,6 @@ def deleteVM(name):
 
 def VMstate(user):
     conn = libvirt.open('qemu:///system')
-    
 
     # Iterates through names of users vms ?creates tuple inside of a list?
     data = VirtualMachine.objects.filter(User__exact=user)
@@ -212,3 +214,30 @@ def VMstate(user):
             print(value.State)
             value.State = 'Suspended'
             value.save()
+
+def VMIP(VMname):
+    conn = libvirt.open('qemu:///system')
+    if conn == None:
+        print('Failed to open connection to qemu:///system', file=sys.stderr)
+        exit(1)
+
+    domainName = VMname
+    dom = conn.lookupByName(domainName)
+    if dom == None:
+        print('Failed to get the domain object', file=sys.stderr)
+
+    ifaces = dom.interfaceAddresses(libvirt.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_AGENT, 0)
+
+    print("The interface IP addresses:")
+    for (name, val) in ifaces.iteritems():
+        if val['addrs']:
+            for ipaddr in val['addrs']:
+                if ipaddr['type'] == libvirt.VIR_IP_ADDR_TYPE_IPV4:
+                    print(ipaddr['addr'] + " VIR_IP_ADDR_TYPE_IPV4")
+                elif ipaddr['type'] == libvirt.VIR_IP_ADDR_TYPE_IPV6:
+                    print(ipaddr['addr'] + " VIR_IP_ADDR_TYPE_IPV6")
+
+    conn.close()
+    exit(0)
+                
+            

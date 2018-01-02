@@ -1,10 +1,17 @@
-from django.shortcuts import render, HttpResponse, redirect
+from django.shortcuts import render, HttpResponse
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
+from django.core.mail import EmailMessage
+from django.contrib.auth.models import User
 
 from . import forms
 from VMManager.views import createNewVM, start, stop, reboot, suspend, deleteVM, VMstate # Add defs 
 from VMManager.models import VirtualMachine
+import string, random
+
+
+import os
+import pathlib
+
 
 import bs4
 import os
@@ -79,7 +86,12 @@ def createVM(request):
     elif request.method == "POST":
         # Populate, verify and process the input data
         form = forms.NewVMForm(request.POST)
+        newSshUser(request, '')
         
+        #Generate random ssh user
+        ssh_user = generateRandChar(5)
+        rand_password = generateRandChar(8)
+
         #Check which os has been chosen
         options = request.POST.get("options", None)
         if options in ["1", "2", "3"]:
@@ -94,12 +106,54 @@ def createVM(request):
                 form.cleaned_data["RAMAmount"],
                 form.cleaned_data["DiskSize"],
                 OS_Choice) != True:
-                return render(request, "home/CreateVM.html", {'alert' : "danger", 'form': form})   
+                return render(request, "home/CreateVM.html", {'alert' : "danger", 'form': form})
+        
+        #Sendmail with SSH credentials
+        #sendMail(request, ssh_user, rand_password)    
+        
         return render(request, "home/CreateVM.html", {'alert' : "success", 'form': form})
 
 @login_required
 def accountInfo(request):
     return HttpResponse("501 Not Implemented")
-      
 
+#Send email with credentials when vm is created
+def sendMail(request, ssh_user, temp_password):
+    current_user = str(request.user)
+    data = User.objects.filter(username__exact=current_user)
+    for value in data:
+        user_email = value.email
+
+    body = '{} \n {} \n'.format(ssh_user, temp_password)    
+    email = EmailMessage('Credentials VMX Virtual Machine', body, to=[user_email])
+    email.send()
+      
+#Generate a random set of chars
+def generateRandChar(amount):
+    return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(amount))
+
+#Create new sshUser for specific VM          
+def newSshUser(request, DomainIp):
+    
+    #Initialise new user
+    NewUser = generateRandChar(5)
+    NewPassword = generateRandChar(8)
+    GoPath = os.getenv('GOPATH')
+
+    #Create user directory
+    path = '/{}/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}'.format(GoPath, NewUser)
+    pathlib.Path(path).mkdir(parents=True, exist_ok=True)
+
+    #Create ssh connection credentials
+    f= open("{}/sshpiper_upstream".format(path),"w+")
+    f.write("root@{}:22".format(DomainIp))
+    f.close()
+
+    sendMail(request, NewUser, NewPassword)
+
+
+
+
+
+    
       
