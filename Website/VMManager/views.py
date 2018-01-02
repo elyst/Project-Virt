@@ -13,7 +13,6 @@ import libvirt
 import os
 import time
 
-
 # Create your views here.
 def index(request):
     return HttpResponse("VMManager works")

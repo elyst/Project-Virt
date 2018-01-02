@@ -13,6 +13,10 @@ import os
 import pathlib
 
 
+import bs4
+import os
+import re
+
 #COPY OS PATH OVER HERE !!!!!!!!!
 
 OS = ['/home/jurrewolff/Desktop/iso/ubuntu-16.04.3-server-amd64.iso', '/home/jurrewolff/Desktop/iso/linuxmint-18.2-cinnamon-64bit.iso', '/APPLE']
