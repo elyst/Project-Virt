@@ -1,6 +1,5 @@
-from django.shortcuts import render, HttpResponse, redirect
+from django.shortcuts import render, HttpResponse
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
 from django.core.mail import EmailMessage
 from django.contrib.auth.models import User
 
@@ -9,10 +8,10 @@ from VMManager.views import createNewVM, start, stop, reboot, suspend, deleteVM,
 from VMManager.models import VirtualMachine
 import string, random
 
-import bs4
+
 import os
 import pathlib
-import re
+
 
 #COPY OS PATH OVER HERE !!!!!!!!!
 
@@ -83,7 +82,7 @@ def createVM(request):
     elif request.method == "POST":
         # Populate, verify and process the input data
         form = forms.NewVMForm(request.POST)
-        newSshUser()
+        newSshUser(request, '')
         
         #Generate random ssh user
         ssh_user = generateRandChar(5)
@@ -114,7 +113,6 @@ def createVM(request):
 def accountInfo(request):
     return HttpResponse("501 Not Implemented")
 
-
 #Send email with credentials when vm is created
 def sendMail(request, ssh_user, temp_password):
     current_user = str(request.user)
@@ -122,29 +120,34 @@ def sendMail(request, ssh_user, temp_password):
     for value in data:
         user_email = value.email
 
-    body = '{} \n {}'.format(ssh_user, temp_password)    
+    body = '{} \n {} \n'.format(ssh_user, temp_password)    
     email = EmailMessage('Credentials VMX Virtual Machine', body, to=[user_email])
     email.send()
       
 #Generate a random set of chars
 def generateRandChar(amount):
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(amount))
-          
-def newSshUser():
+
+#Create new sshUser for specific VM          
+def newSshUser(request, DomainIp):
     
     #Initialise new user
-    new_User = generateRandChar(5)
-    go_path = os.getenv('GOPATH')
-    
+    NewUser = generateRandChar(5)
+    NewPassword = generateRandChar(8)
+    GoPath = os.getenv('GOPATH')
 
     #Create user directory
-    path = '/{}/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}'.format(go_path, new_User)
+    path = '/{}/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}'.format(GoPath, NewUser)
     pathlib.Path(path).mkdir(parents=True, exist_ok=True)
 
     #Create ssh connection credentials
     f= open("{}/sshpiper_upstream".format(path),"w+")
-    f.write("root@{}".format("192.168.178.234:22"))
+    f.write("root@{}:22".format(DomainIp))
     f.close()
+
+    sendMail(request, NewUser, NewPassword)
+
+
 
 
 
