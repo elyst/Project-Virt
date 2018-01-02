@@ -1,4 +1,14 @@
 from __future__ import print_function
+
+import sys
+import xml.etree.ElementTree as ET
+import uuid
+import libvirt
+import os
+import time
+import random, string
+import pathlib
+
 from django.shortcuts import render, HttpResponse, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
@@ -8,14 +18,7 @@ from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
 
 from .models import VirtualMachine
-import sys
-import xml.etree.ElementTree as ET
-import uuid
-import libvirt
-import os
-import time
-import random, string
-import pathlib
+
 
 
 # Create your views here.
@@ -46,9 +49,6 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     if maximum(str(request.user), ram) != True:
         messages.error(request, 'You have reached the maximum amount of Virtual Machines')
         return False
-
-    #If everything ok, save VM
-    vm.save() 
         
     os.system(
         "sudo qemu-img create -f qcow2 /home/jurrewolff/Desktop/images/{NAME}.qcow2 {SIZE}G".format(
@@ -125,6 +125,9 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
 
     #Create new SSH user
     newSshUser(request, VMIP(vm.Name), vm.SSH_User)
+
+    #If everything ok, save VM
+    vm.save() 
 
     messages.success(request, 'Your VM has been created. \n An email with your credentials has been send!')
     return True

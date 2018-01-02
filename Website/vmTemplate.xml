@@ -1,6 +1,6 @@
 <domain type="kvm">
-<name>Ubuntu</name>
-<uuid>9816b436-1f06-4929-8765-37d48b1e18b4</uuid>
+<name>hasdjh</name>
+<uuid>f3c20d99-ed76-4819-897b-1f4b39ac942e</uuid>
 <memory>1000000</memory>
 <currentMemory>1000000</currentMemory>
 <vcpu>1</vcpu>
@@ -19,7 +19,7 @@
 <emulator>/usr/bin/kvm</emulator>
 <disk device="disk" type="file">
 <driver name="qemu" type="qcow2" />
-<source file="/home/jurrewolff/Desktop/images/Ubuntu.qcow2" />
+<source file="/home/jurrewolff/Desktop/images/hasdjh.qcow2" />
 <target bus="virtio" dev="vda" />
 <address bus="0x00" domain="0x0000" function="0x0" slot="0x04" type="pci" />
 </disk>
