@@ -1,19 +1,28 @@
-from django.shortcuts import render, HttpResponse, redirect
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.db.models import Sum, Count
+from __future__ import print_function
 
-from .models import VirtualMachine
+import sys
 import xml.etree.ElementTree as ET
 import uuid
 import libvirt
 import os
 import time
+import random, string
+import pathlib
+
+from django.shortcuts import render, HttpResponse, redirect
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.db.models import Sum, Count
+from django.contrib.auth.models import User
+from django.core.mail import EmailMessage
+
+from .models import VirtualMachine
+
+
 
 # Create your views here.
 def index(request):
-    # createNewVM("Name", 2, 500000, 30)
     return HttpResponse("VMManager works")
 
 @login_required
@@ -29,6 +38,7 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     vm.CPUCores = cores
     vm.RAMAmount = ram
     vm.DISKSize = storage
+    vm.SSH_User = generateRandChar(5)
     
     #Check for duplicate names in Database
     if duplicates('Name', vm.Name, 1) != True:
@@ -39,9 +49,6 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     if maximum(str(request.user), ram) != True:
         messages.error(request, 'You have reached the maximum amount of Virtual Machines')
         return False
-
-    #If everything ok, save VM
-    vm.save() 
         
     os.system(
         "sudo qemu-img create -f qcow2 /home/jurrewolff/Desktop/images/{NAME}.qcow2 {SIZE}G".format(
@@ -85,7 +92,7 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     mroot2.text = str(ram)
 
     # Change number of vcpu's
-    vcpuroot = tree.find('vcpu')            # Tree.find has to be used here bcause there's no parent? 
+    vcpuroot = tree.find('vcpu') #Tree.find has to be used here bcause there's no parent?
     vcpuroot.text = str(cores)
 
     # Change disk image name accordingly
@@ -116,13 +123,18 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     conn = libvirt.open()
     conn.defineXML(xmlstr)
 
+    #Create new SSH user
+    newSshUser(request, VMIP(vm.Name), vm.SSH_User)
 
+    #If everything ok, save VM
+    vm.save() 
 
-    messages.success(request, 'Your VM has been created.')
+    messages.success(request, 'Your VM has been created. \n An email with your credentials has been send!')
     return True
 
 def duplicates(field, name, counter):
     field = field + '__iexact'
+
     #PYLINT REGISTERS AN ERROR OVER HERE. JUST IGNORE THAT, IT IS NO ERROR
     data = VirtualMachine.objects.filter(**{ field: name })
     count = 0
@@ -191,7 +203,6 @@ def deleteVM(name):
 
 def VMstate(user):
     conn = libvirt.open('qemu:///system')
-    
 
     # Iterates through names of users vms ?creates tuple inside of a list?
     data = VirtualMachine.objects.filter(User__exact=user)
@@ -212,3 +223,65 @@ def VMstate(user):
             print(value.State)
             value.State = 'Suspended'
             value.save()
+
+def VMIP(VMname):
+    ip_list = []
+    conn = libvirt.open('qemu:///system')
+    if conn == None:
+        print('Failed to open connection to qemu:///system', file=sys.stderr)
+        exit(1)
+
+    domainName = VMname
+    dom = conn.lookupByName(domainName)
+    if dom == None:
+        print('Failed to get the domain object', file=sys.stderr)
+
+    ifaces = dom.interfaceAddresses(libvirt.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_AGENT, 0)
+
+    print("The interface IP addresses:")
+    for (name, val) in ifaces.iteritems():
+        if val['addrs']:
+            for ipaddr in val['addrs']:
+                if ipaddr['type'] == libvirt.VIR_IP_ADDR_TYPE_IPV4:
+                    ip_list.append(ipaddr['addr'])
+                    print(ipaddr['addr'] + " VIR_IP_ADDR_TYPE_IPV4")
+                elif ipaddr['type'] == libvirt.VIR_IP_ADDR_TYPE_IPV6:
+                    ip_list.append(ipaddr['addr'])
+                    print(ipaddr['addr'] + " VIR_IP_ADDR_TYPE_IPV6")
+
+    conn.close()
+    return ip_list
+
+#Send email with credentials when vm is created
+def sendMail(request, ssh_user, temp_password):
+    current_user = str(request.user)
+    data = User.objects.filter(username__exact=current_user)
+    for value in data:
+        user_email = value.email
+
+    body = '{} \n {} \n'.format(ssh_user, temp_password)    
+    email = EmailMessage('Credentials VMX Virtual Machine', body, to=[user_email])
+    email.send()
+      
+#Generate a random set of chars
+def generateRandChar(amount):
+    return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(amount))
+
+#Create new sshUser for specific VM
+def newSshUser(request, DomainIp, SSHuser):
+    
+    #Initialise new user
+    NewUser = SSHuser
+    NewPassword = generateRandChar(8)
+    GoPath = os.getenv('GOPATH')
+
+    #Create user directory
+    path = '/{}/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}'.format(GoPath, NewUser)
+    pathlib.Path(path).mkdir(parents=True, exist_ok=True)
+
+    #Create ssh connection credentials
+    f= open("{}/sshpiper_upstream".format(path),"w+")
+    f.write("root@{}:22".format(DomainIp))
+    f.close()
+
+    sendMail(request, NewUser, NewPassword)
