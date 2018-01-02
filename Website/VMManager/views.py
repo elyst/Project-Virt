@@ -51,14 +51,14 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
         return False
         
     os.system(
-        "sudo qemu-img create -f qcow2 /home/jurrewolff/Desktop/images/{NAME}.qcow2 {SIZE}G".format(
+        "sudo qemu-img create -f qcow2 /home/john/Desktop/images/{NAME}.qcow2 {SIZE}G".format(
             NAME = vm.Name,
             SIZE = vm.DISKSize
         )
     )
 
     os.system(
-        "qemu-img resize /home/jurrewolff/Desktop/images/{NAME}.qcow2 +{SIZE}G".format(
+        "qemu-img resize /home/john/Desktop/images/{NAME}.qcow2 +{SIZE}G".format(
             NAME = vm.Name,
             SIZE = vm.DISKSize
         )
@@ -96,7 +96,7 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     vcpuroot.text = str(cores)
 
     # Change disk image name accordingly
-    imagepath = '/home/jurrewolff/Desktop/images/disk.qcow2'
+    imagepath = '/home/john/Desktop/images/disk.qcow2'
     imagepath = imagepath.replace('disk', str(nameroot.text))
     root2[1][1].set('file', str(imagepath))
 
@@ -122,9 +122,16 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     # Send the string to libvirt
     conn = libvirt.open()
     conn.defineXML(xmlstr)
+    
+    #Start VM
+    start(vm.Name)
+    print(VMIP(vm.Name))
+    
+    #Sleep so the ip can be processed 
+    time.sleep(10)
 
     #Create new SSH user
-    newSshUser(request, VMIP(vm.Name), vm.SSH_User)
+    newSshUser(request,VMIP(vm.Name), vm.SSH_User)
 
     #If everything ok, save VM
     vm.save() 
@@ -196,7 +203,7 @@ def deleteVM(name):
         dom0.destroy()
     
     dom0.undefine() # Erases vm from existence (Atleast from kvm's perspective)
-    os.remove('/home/jurrewolff/Desktop/images/{NAME}.qcow2'.format(NAME = name)) # Removes disk
+    os.remove('/home/john/Desktop/images/{NAME}.qcow2'.format(NAME = name)) # Removes disk
     
     instance = VirtualMachine.objects.get(Name = name)
     instance.delete()   # Deleted entry from database
@@ -225,41 +232,21 @@ def VMstate(user):
             value.save()
 
 def VMIP(VMname):
-    ip_list = []
-    conn = libvirt.open('qemu:///system')
-    if conn == None:
-        print('Failed to open connection to qemu:///system', file=sys.stderr)
-        exit(1)
+    ip_command = 'for mac in `virsh domiflist {} |grep -o -E "([0-9a-f]{{2}}:){{5}}([0-9a-f]{{2}})"` ; do arp -e |grep $mac  |grep -o -P "^\d{{1,3}}\.\d{{1,3}}\.\d{{1,3}}\.\d{{1,3}}" ; done'.format(VMname)
+    result = os.popen(ip_command).read()
+    result = result.replace("\n", "")
 
-    domainName = VMname
-    dom = conn.lookupByName(domainName)
-    if dom == None:
-        print('Failed to get the domain object', file=sys.stderr)
-
-    ifaces = dom.interfaceAddresses(libvirt.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_AGENT, 0)
-
-    print("The interface IP addresses:")
-    for (name, val) in ifaces.iteritems():
-        if val['addrs']:
-            for ipaddr in val['addrs']:
-                if ipaddr['type'] == libvirt.VIR_IP_ADDR_TYPE_IPV4:
-                    ip_list.append(ipaddr['addr'])
-                    print(ipaddr['addr'] + " VIR_IP_ADDR_TYPE_IPV4")
-                elif ipaddr['type'] == libvirt.VIR_IP_ADDR_TYPE_IPV6:
-                    ip_list.append(ipaddr['addr'])
-                    print(ipaddr['addr'] + " VIR_IP_ADDR_TYPE_IPV6")
-
-    conn.close()
-    return ip_list
+    return result
 
 #Send email with credentials when vm is created
-def sendMail(request, ssh_user, temp_password):
+def sendMail(request, ssh_user, temp_password, ssh_credentials):
     current_user = str(request.user)
     data = User.objects.filter(username__exact=current_user)
+
     for value in data:
         user_email = value.email
 
-    body = '{} \n {} \n'.format(ssh_user, temp_password)    
+    body = '{} \n {} \n {} to login to the root account with the password. \n !! PLEASE CHANGE YOUR PASSWORD IMMEDIATLY !!.format(ssh_user, temp_password, ssh_credentials)    
     email = EmailMessage('Credentials VMX Virtual Machine', body, to=[user_email])
     email.send()
       
@@ -274,6 +261,7 @@ def newSshUser(request, DomainIp, SSHuser):
     NewUser = SSHuser
     NewPassword = generateRandChar(8)
     GoPath = os.getenv('GOPATH')
+    ssh_credentials = "ssh 127.0.0.1 -l {} -p 2222".format(SSHuser)
 
     #Create user directory
     path = '/{}/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}'.format(GoPath, NewUser)
@@ -284,4 +272,4 @@ def newSshUser(request, DomainIp, SSHuser):
     f.write("root@{}:22".format(DomainIp))
     f.close()
 
-    sendMail(request, NewUser, NewPassword)
+    sendMail(request, NewUser, NewPassword, ssh_credentials)
