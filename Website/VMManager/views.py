@@ -1,3 +1,4 @@
+from __future__ import print_function
 from django.shortcuts import render, HttpResponse, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
@@ -7,7 +8,6 @@ from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
 
 from .models import VirtualMachine
-from __future__ import print_function
 import sys
 import xml.etree.ElementTree as ET
 import uuid
@@ -35,6 +35,7 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     vm.CPUCores = cores
     vm.RAMAmount = ram
     vm.DISKSize = storage
+    vm.SSH_User = generateRandChar(5)
     
     #Check for duplicate names in Database
     if duplicates('Name', vm.Name, 1) != True:
@@ -123,14 +124,14 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     conn.defineXML(xmlstr)
 
     #Create new SSH user
-    newSshUser(request, VMIP(vm.Name))
+    newSshUser(request, VMIP(vm.Name), vm.SSH_User)
 
     messages.success(request, 'Your VM has been created. \n An email with your credentials has been send!')
     return True
 
 def duplicates(field, name, counter):
     field = field + '__iexact'
-    
+
     #PYLINT REGISTERS AN ERROR OVER HERE. JUST IGNORE THAT, IT IS NO ERROR
     data = VirtualMachine.objects.filter(**{ field: name })
     count = 0
@@ -264,10 +265,10 @@ def generateRandChar(amount):
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(amount))
 
 #Create new sshUser for specific VM
-def newSshUser(request, DomainIp):
+def newSshUser(request, DomainIp, SSHuser):
     
     #Initialise new user
-    NewUser = generateRandChar(5)
+    NewUser = SSHuser
     NewPassword = generateRandChar(8)
     GoPath = os.getenv('GOPATH')
 
