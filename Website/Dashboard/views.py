@@ -11,6 +11,7 @@ import string, random
 
 import bs4
 import os
+import pathlib
 import re
 
 #COPY OS PATH OVER HERE !!!!!!!!!
@@ -82,6 +83,7 @@ def createVM(request):
     elif request.method == "POST":
         # Populate, verify and process the input data
         form = forms.NewVMForm(request.POST)
+        newSshUser()
         
         #Generate random ssh user
         ssh_user = generateRandChar(5)
@@ -104,8 +106,8 @@ def createVM(request):
                 return render(request, "home/CreateVM.html", {'alert' : "danger", 'form': form})
         
         #Sendmail with SSH credentials
-        sendMail(request, ssh_user, rand_password)    
-
+        #sendMail(request, ssh_user, rand_password)    
+        
         return render(request, "home/CreateVM.html", {'alert' : "success", 'form': form})
 
 @login_required
@@ -128,5 +130,23 @@ def sendMail(request, ssh_user, temp_password):
 def generateRandChar(amount):
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(amount))
           
+def newSshUser():
+    
+    #Initialise new user
+    new_User = generateRandChar(5)
+    go_path = os.getenv('GOPATH')
+    
 
+    #Create user directory
+    path = '/{}/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}'.format(go_path, new_User)
+    pathlib.Path(path).mkdir(parents=True, exist_ok=True)
+
+    #Create ssh connection credentials
+    f= open("{}/sshpiper_upstream".format(path),"w+")
+    f.write("root@{}".format("192.168.178.234:22"))
+    f.close()
+
+
+
+    
       

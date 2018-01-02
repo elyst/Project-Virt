@@ -212,3 +212,4 @@ def VMstate(user):
             print(value.State)
             value.State = 'Suspended'
             value.save()
+            
