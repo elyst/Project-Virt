@@ -129,7 +129,7 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     
     #Sleep so the ip can be processed 
     time.sleep(10)
-    
+
     #Create new SSH user
     newSshUser(request,VMIP(vm.Name), vm.SSH_User)
 
@@ -239,13 +239,14 @@ def VMIP(VMname):
     return result
 
 #Send email with credentials when vm is created
-def sendMail(request, ssh_user, temp_password):
+def sendMail(request, ssh_user, temp_password, ssh_credentials):
     current_user = str(request.user)
     data = User.objects.filter(username__exact=current_user)
+
     for value in data:
         user_email = value.email
 
-    body = '{} \n {} \n'.format(ssh_user, temp_password)    
+    body = '{} \n {} \n {} to login to the root account with the password. \n !! PLEASE CHANGE YOUR PASSWORD IMMEDIATLY !!.format(ssh_user, temp_password, ssh_credentials)    
     email = EmailMessage('Credentials VMX Virtual Machine', body, to=[user_email])
     email.send()
       
@@ -260,6 +261,7 @@ def newSshUser(request, DomainIp, SSHuser):
     NewUser = SSHuser
     NewPassword = generateRandChar(8)
     GoPath = os.getenv('GOPATH')
+    ssh_credentials = "ssh 127.0.0.1 -l {} -p 2222".format(SSHuser)
 
     #Create user directory
     path = '/{}/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}'.format(GoPath, NewUser)
@@ -270,4 +272,4 @@ def newSshUser(request, DomainIp, SSHuser):
     f.write("root@{}:22".format(DomainIp))
     f.close()
 
-    sendMail(request, NewUser, NewPassword)
+    sendMail(request, NewUser, NewPassword, ssh_credentials)
