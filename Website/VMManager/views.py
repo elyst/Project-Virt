@@ -245,13 +245,13 @@ def VMIP(request, VMname):
     newSshUser(request, result, SSH_User)
 
 #Send email with credentials when vm is created
-def sendMail(request, ssh_user, temp_password):
+def sendMail(request, ssh_user, temp_password, ssh_credentials):
     current_user = str(request.user)
     data = User.objects.filter(username__exact=current_user)
     for value in data:
         user_email = value.email
 
-    body = '{} \n {} \n'.format(ssh_user, temp_password)    
+    body = '{} \n {} \n {}'.format(ssh_user, temp_password, ssh_credentials)    
     email = EmailMessage('Credentials VMX Virtual Machine', body, to=[user_email])
     email.send()
       
@@ -277,4 +277,6 @@ def newSshUser(request, DomainIp, SSHuser):
     f.write("root@{}:22".format(DomainIp))
     f.close()
 
-    sendMail(request, NewUser, NewPassword)
+    ssh_credentials = "ssh 127.0.0.1 -l {} -p 2222".format(SSHuser)
+
+    sendMail(request, NewUser, NewPassword, ssh_credentials)
