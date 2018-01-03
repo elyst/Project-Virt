@@ -148,4 +148,3 @@ LOGIN_URL='/login'
 # Set login session timeout to 1 hour
 SESSION_COOKIE_AGE = 3600
 
-
