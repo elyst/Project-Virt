@@ -6,6 +6,7 @@ import os
 import random, string
 import pathlib
 import after_response
+import shutil
 from time import time, sleep
 
 from django.shortcuts import render, HttpResponse, redirect
@@ -196,7 +197,7 @@ def deleteVM(name):
     for value in data:
         ssh_user = value.SSH_User
     
-    os.rmdir('/home/john/go/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}'.format(ssh_user))    
+    shutil.rmtree('/home/john/go/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}'.format(ssh_user))    
     conn = libvirt.open('qemu:///system')
     dom0 = conn.lookupByName(name)
 
@@ -209,7 +210,7 @@ def deleteVM(name):
     instance = VirtualMachine.objects.get(Name = name)
     instance.delete()   # Deleted entry from database
 
-    restart_SSH()
+    restart_SSH.after_response()
 
 def VMstate(user):
     conn = libvirt.open('qemu:///system')
@@ -291,11 +292,11 @@ def newSshUser(request, DomainIp, SSHuser):
 
     sendMail(request, NewUser, NewPassword, ssh_credentials)
 
-
+@after_response.enable
 def restart_SSH():
     
     #restart ssh services
-    os.system("kill $(ps -fade | grep showme.sh | grep -v grep | awk '{print $2}')")
+    os.system("kill $(ps -fade | grep showme.sh | grep -v grep | awk '{{print $2}}')")
     sleep(1)
     os.system("kill -9 $(lsof -i:2222 -t) 2> /dev/null")
     sleep(1)
