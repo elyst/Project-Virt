@@ -192,6 +192,11 @@ def suspend(name):
     print(dom0.state())
 
 def deleteVM(name):
+    data = VirtualMachine.objects.filter(Name__exact = name)
+    for value in data:
+        ssh_user = value.SSH_User
+    
+    os.rmdir('/home/john/go/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}'.format(ssh_user))    
     conn = libvirt.open('qemu:///system')
     dom0 = conn.lookupByName(name)
 
@@ -203,6 +208,8 @@ def deleteVM(name):
     
     instance = VirtualMachine.objects.get(Name = name)
     instance.delete()   # Deleted entry from database
+
+    restart_SSH()
 
 def VMstate(user):
     conn = libvirt.open('qemu:///system')
@@ -243,6 +250,9 @@ def VMIP(request, VMname):
     for value in data:
         SSH_User = value.SSH_User 
     newSshUser(request, result, SSH_User)
+    
+    #restart ssh reverse proxy service
+    restart_SSH()
 
 #Send email with credentials when vm is created
 def sendMail(request, ssh_user, temp_password, ssh_credentials):
@@ -280,3 +290,13 @@ def newSshUser(request, DomainIp, SSHuser):
     ssh_credentials = "ssh 127.0.0.1 -l {} -p 2222".format(SSHuser)
 
     sendMail(request, NewUser, NewPassword, ssh_credentials)
+
+
+def restart_SSH():
+    
+    #restart ssh services
+    os.system("kill $(ps -fade | grep showme.sh | grep -v grep | awk '{print $2}')")
+    sleep(1)
+    os.system("kill -9 $(lsof -i:2222 -t) 2> /dev/null")
+    sleep(1)
+    os.system("sh /home/john/go/src/github.com/tg123/sshpiper/sshpiperd/example/showme.sh")    
