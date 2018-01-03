@@ -1,13 +1,12 @@
-from __future__ import print_function
-
 import sys
 import xml.etree.ElementTree as ET
 import uuid
 import libvirt
 import os
-import time
 import random, string
 import pathlib
+import after_response
+from time import time, sleep
 
 from django.shortcuts import render, HttpResponse, redirect
 from django.views.decorators.csrf import csrf_exempt
@@ -38,7 +37,7 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     vm.CPUCores = cores
     vm.RAMAmount = ram
     vm.DISKSize = storage
-    vm.SSH_User = generateRandChar(5)
+    vm.SSH_User = generateRandChar(5) 
     
     #Check for duplicate names in Database
     if duplicates('Name', vm.Name, 1) != True:
@@ -49,7 +48,10 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     if maximum(str(request.user), ram) != True:
         messages.error(request, 'You have reached the maximum amount of Virtual Machines')
         return False
-        
+
+    #If everything ok, save VM
+    vm.save()
+
     os.system(
         "sudo qemu-img create -f qcow2 /home/john/Desktop/images/{NAME}.qcow2 {SIZE}G".format(
             NAME = vm.Name,
@@ -58,7 +60,7 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     )
 
     os.system(
-        "qemu-img resize /home/john/Desktop/images/{NAME}.qcow2 +{SIZE}G".format(
+        "sudo qemu-img resize /home/john/Desktop/images/{NAME}.qcow2 +{SIZE}G".format(
             NAME = vm.Name,
             SIZE = vm.DISKSize
         )
@@ -125,19 +127,13 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     
     #Start VM
     start(vm.Name)
-    print(VMIP(vm.Name))
     
-    #Sleep so the ip can be processed 
-    time.sleep(10)
+    #Gaining async ip while function returned success
+    VMIP.after_response(request, vm.Name)
 
-    #Create new SSH user
-    newSshUser(request,VMIP(vm.Name), vm.SSH_User)
-
-    #If everything ok, save VM
-    vm.save() 
-
-    messages.success(request, 'Your VM has been created. \n An email with your credentials has been send!')
+    messages.success(request, 'Your VM has been created. \n An email with your credentials will be send shortly!')
     return True
+        
 
 def duplicates(field, name, counter):
     field = field + '__iexact'
@@ -184,7 +180,7 @@ def reboot(name):
 
     dom0 = conn.lookupByName(name)
     dom0.shutdown()
-    time.sleep(2)
+    sleep(2)
 
     dom0.start()  
 
@@ -231,28 +227,38 @@ def VMstate(user):
             value.State = 'Suspended'
             value.save()
 
-def VMIP(VMname):
+@after_response.enable
+def VMIP(request, VMname):
     ip_command = 'for mac in `virsh domiflist {} |grep -o -E "([0-9a-f]{{2}}:){{5}}([0-9a-f]{{2}})"` ; do arp -e |grep $mac  |grep -o -P "^\d{{1,3}}\.\d{{1,3}}\.\d{{1,3}}\.\d{{1,3}}" ; done'.format(VMname)
-    result = os.popen(ip_command).read()
-    result = result.replace("\n", "")
-
-    return result
+    result = ""
+    while result == "":
+        result = os.popen(ip_command).read()
+        if result != "":
+            result = result.replace("\n", "")
+            print('successfully got ip from {} as {}...'.format(VMname, result))
+        else:    
+            print('Waiting for ip response of {}...'.format(VMname))
+        sleep(5)
+    data = VirtualMachine.objects.filter(Name__exact = VMname)
+    for value in data:
+        SSH_User = value.SSH_User 
+    newSshUser(request, result, SSH_User)
 
 #Send email with credentials when vm is created
-def sendMail(request, ssh_user, temp_password, ssh_credentials):
+def sendMail(request, ssh_user, temp_password):
     current_user = str(request.user)
     data = User.objects.filter(username__exact=current_user)
-
     for value in data:
         user_email = value.email
 
-    body = '{} \n {} \n {} to login to the root account with the password. \n !! PLEASE CHANGE YOUR PASSWORD IMMEDIATLY !!'.format(ssh_user, temp_password, ssh_credentials)    
+    body = '{} \n {} \n'.format(ssh_user, temp_password)    
     email = EmailMessage('Credentials VMX Virtual Machine', body, to=[user_email])
     email.send()
       
 #Generate a random set of chars
 def generateRandChar(amount):
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(amount))
+
 
 #Create new sshUser for specific VM
 def newSshUser(request, DomainIp, SSHuser):
@@ -261,7 +267,6 @@ def newSshUser(request, DomainIp, SSHuser):
     NewUser = SSHuser
     NewPassword = generateRandChar(8)
     GoPath = os.getenv('GOPATH')
-    ssh_credentials = "ssh 127.0.0.1 -l {} -p 2222".format(SSHuser)
 
     #Create user directory
     path = '/{}/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}'.format(GoPath, NewUser)
@@ -272,4 +277,4 @@ def newSshUser(request, DomainIp, SSHuser):
     f.write("root@{}:22".format(DomainIp))
     f.close()
 
-    sendMail(request, NewUser, NewPassword, ssh_credentials)
+    sendMail(request, NewUser, NewPassword)

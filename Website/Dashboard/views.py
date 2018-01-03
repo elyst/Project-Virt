@@ -8,10 +8,11 @@ from VMManager.models import VirtualMachine
 import os
 import os
 import re
+from time import sleep
 
 #COPY OS PATH OVER HERE !!!!!!!!!
 
-OS = ['/home/jurrewolff/Desktop/iso/ubuntu-16.04.3-server-amd64.iso', '/home/jurrewolff/Desktop/iso/linuxmint-18.2-cinnamon-64bit.iso', '/APPLE']
+OS = ['/home/john/Desktop/iso/ubuntu-16.04.3-desktop-amd64(1).iso', '/home/jurrewolff/Desktop/iso/linuxmint-18.2-cinnamon-64bit.iso', '/APPLE']
 
 
 # Create your views here.
@@ -94,9 +95,17 @@ def createVM(request):
                 form.cleaned_data["DiskSize"],
                 OS_Choice) != True:
                 return render(request, "home/CreateVM.html", {'alert' : "danger", 'form': form})
-      
-        return render(request, "home/CreateVM.html", {'alert' : "success", 'form': form})
-
+            return render(request, "home/CreateVM.html", {'alert' : "success", 'form': form})
+   
 @login_required
 def accountInfo(request):
     return HttpResponse("501 Not Implemented")
+
+
+
+
+
+
+
+    
+      
