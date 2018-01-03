@@ -209,6 +209,8 @@ def deleteVM(name):
     instance = VirtualMachine.objects.get(Name = name)
     instance.delete()   # Deleted entry from database
 
+    restart_SSH()
+
 def VMstate(user):
     conn = libvirt.open('qemu:///system')
 
