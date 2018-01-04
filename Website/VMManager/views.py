@@ -20,7 +20,6 @@ from django.core.mail import EmailMessage
 from .models import VirtualMachine
 
 
-
 # Create your views here.
 def index(request):
     return HttpResponse("VMManager works")
@@ -194,10 +193,11 @@ def suspend(name):
 
 def deleteVM(name):
     data = VirtualMachine.objects.filter(Name__exact = name)
+    go_path = os.getenv['GOPATH']
     for value in data:
         ssh_user = value.SSH_User
     
-    shutil.rmtree('/home/john/go/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}'.format(ssh_user))    
+    shutil.rmtree('/{}/go/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}'.format(go_path, ssh_user))    
     conn = libvirt.open('qemu:///system')
     dom0 = conn.lookupByName(name)
 
@@ -285,7 +285,8 @@ def newSshUser(request, DomainIp, SSHuser):
     f.close()
     os.system('chmod 400 /{}/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}/sshpiper_upstream'.format(GoPath,NewUser))
 
-    ssh_credentials = "ssh 127.0.0.1 -l {} -p 2222".format(SSHuser)
+    ssh_credentials = "ssh {}@127.0.0.1 -p 2222".format(SSHuser)
 
     sendMail(request, NewUser, NewPassword, ssh_credentials)
+
   
