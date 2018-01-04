@@ -176,14 +176,10 @@ def stop(name):
     print(dom0.state())
     
 def reboot(name):
-    conn = libvirt.open('qemu:///system')
-
-    dom0 = conn.lookupByName(name)
-    dom0.shutdown()
+    stop(Name)
     sleep(2)
-
-    dom0.start()  
-
+    start(name)
+      
 def suspend(name):
     conn = libvirt.open('qemu:///system')
 
