@@ -41,11 +41,11 @@
                                 <form action="/dashboard/my-vm/" method="post">{% csrf_token %}
                                         <button name="stop" type="submit" value="{{ value.Name }}" class="btn btn-danger"><em class="fa fa-pause"></em></button>
                                 </form>
-                                {% endif %}
+                                
                                 <form action="/dashboard/my-vm/" method="post">{% csrf_token %}
                                         <button name="reboot" value="{{ value.Name }}" class="btn btn-warning"><em class="fa fa-refresh"></em></button>
                                         </form>
-
+                                        {% endif %}
                                 <form action="/dashboard/my-vm/" method="post">{% csrf_token %}
                                         <button name="deleteVM" value="{{ value.Name }}" class="btn btn-danger" data-toggle="confirmation"><em class="fa fa-trash"></em></button>
                                         </form>                   
