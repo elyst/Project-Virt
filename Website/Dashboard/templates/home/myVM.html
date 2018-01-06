@@ -6,9 +6,11 @@
                 <div class="panel-heading">Manage VM</div>
                 <div class="panel-body">
                         <table class="table table-striped">
-                                <thead> <!--Add header entries-->
+                                <thead>
+                                        <!--Add header entries-->
                                         <td>
-                                                <b>Name</b>     <!--b Stands for bold-->
+                                                <b>Name</b>
+                                                <!--b Stands for bold-->
                                         </td>
                                         <td>
                                                 <b>Date of creation</b>
@@ -21,7 +23,8 @@
                                         </td>
                                 </thead>
                                 <tbody>
-                                        {% for value in data %} <!--Loop through python passed data-->
+                                        {% for value in data %}
+                                        <!--Loop through python passed data-->
 
                                         <tr>
                                                 <td>
@@ -33,36 +36,43 @@
                                                 <td>
                                                         {{value.State}}
                                                 </td>
-                                                
-                                                        {% if value.State == "Shut down"%}
-                                                        <td>
+
+                                                {% if value.State == "Shut down"%}
+                                                <td>
                                                         <form action="/dashboard/my-vm/" method="post">{% csrf_token %}
                                                                 <button name="start" type="submit" class="btn btn-md btn-primary" value="{{value.Name}}">Start</button>
                                                         </form>
-                                                        </td>   
-                                                            
-                                                        {% elif value.State == "Running"%}
-                                                        <td>                    
+                                                </td>
+
+                                                <td>
+                                                        <form action="/dashboard/my-vm/" method="post">{% csrf_token %}
+                                                                <button name="VMbackup" class="btn btn-md btn-primary" value="{{value.Name}}">Backup VM</button>
+                                                        </form>
+                                                </td>
+
+                                                {% elif value.State == "Running"%}
+                                                <td>
                                                         <form action="/dashboard/my-vm/" method="post">{% csrf_token %}
                                                                 <button name="stop" class="btn btn-md btn-primary" value="{{value.Name}}">Stop</button>
                                                         </form>
-                                                        </td>
-                                        
-                                                        <td>
+                                                </td>
+
+                                                <td>
 
                                                         <form action="/dashboard/my-vm/" method="post">{% csrf_token %}
                                                                 <button name="reboot" class="btn btn-md btn-primary" value="{{value.Name}}">Reboot</button>
-                                                                </form>
-                                                                </td>
-                                                                {% endif %}
-                                                                <td>
-                                                        
+                                                        </form>
+                                                </td>
+                                                {% endif %}
+                                                <td>
+
                                                         <form action="/dashboard/my-vm/" method="post">{% csrf_token %}
                                                                 <button name="deleteVM" class="btn btn-md btn-primary" value="{{value.Name}}">Delete</button>
                                                 </td>
-                                                        </form>
+                                                </form>
                                                 </td>
-                                                {% endfor %} <!--Ends loop-->
+                                                {% endfor %}
+                                                <!--Ends loop-->
                                         </tr>
                                 </tbody>
                         </table>

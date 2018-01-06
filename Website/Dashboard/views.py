@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 from . import forms
-from VMManager.views import createNewVM, start, stop, reboot, suspend, deleteVM, VMstate # Add defs 
+from VMManager.views import createNewVM, start, stop, reboot, suspend, deleteVM, VMstate, VMbackup # Add defs 
 from VMManager.models import VirtualMachine
 
 import bs4
@@ -61,6 +61,10 @@ def myVM(request):
             name = request.POST.get("deleteVM", None)
             print("deletetet")
             deleteVM(name) 
+        elif request.POST.get("VMbackup", None):
+            name = request.POST.get("VMbackup", None)
+            VMbackup(name)
+            print('Backup made')
 
         VMstate(user)
         data = VirtualMachine.objects.filter(User__exact=user)

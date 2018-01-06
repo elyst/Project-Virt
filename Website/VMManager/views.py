@@ -10,6 +10,7 @@ import uuid
 import libvirt
 import os
 import time
+import datetime
 
 # Create your views here.
 def index(request):
@@ -94,7 +95,7 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     root2[1][1].set('file', str(imagepath))
 
     # Change iso file (This one is the right way)
-    isopath = os_choice # LET OP! OS MOET NOG IN DE FORM WORDEN GEVRAAGD! VERVANG DAN LINUXMINT NAAR 'os'!
+    isopath = os_choice
     isopath = isopath.replace('os', str(os_choice))
     root2[2][1].set('file', str(isopath))
 
@@ -192,8 +193,6 @@ def deleteVM(name):
 def VMstate(user):
     conn = libvirt.open('qemu:///system')
     
-
-    # Iterates through names of users vms ?creates tuple inside of a list?
     data = VirtualMachine.objects.filter(User__exact=user)
     vmlist = 0
 
@@ -212,3 +211,13 @@ def VMstate(user):
             print(value.State)
             value.State = 'Suspended'
             value.save()
+
+def VMbackup(name):
+    conn = libvirt.open('qemu:///system')
+    dom0 = conn.lookupByName(name)
+
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S") # Timestamp for new backup name
+    bName = name
+    bName += '_'
+    bName += timestamp
+    os.system('cp /home/jurrewolff/Desktop/images/{DISK}.qcow2 /home/jurrewolff/Desktop/backups/{BNAME}.qcow2'.format(DISK = name, BNAME = bName))
