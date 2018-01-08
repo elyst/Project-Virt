@@ -19,7 +19,6 @@ from django.core.mail import EmailMessage
 
 from .models import VirtualMachine
 
-
 # Create your views here.
 def index(request):
     return HttpResponse("VMManager works")
@@ -37,7 +36,7 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     vm.CPUCores = cores
     vm.RAMAmount = ram
     vm.DISKSize = storage
-    vm.SSH_User = generateRandChar(5) 
+    vm.SSH_User = generateUser(5)
     
     #Check for duplicate names in Database
     if duplicates('Name', vm.Name, 1) != True:
@@ -291,5 +290,18 @@ def newSshUser(request, DomainIp, SSHuser):
     ssh_credentials = "ssh {}@127.0.0.1 -p 2222".format(SSHuser)
 
     sendMail(request, NewUser, NewPassword, ssh_credentials)
+
+
+
+def generateUser(length):
+    Alphabet= 'abcdefghijklmnopqrstuvwxyz'
+    username = ''
+    count = 0
+    while count != length:
+        letter = random.choice(Alphabet)
+        username = username + letter
+        count += 1
+
+    return username    
 
   
