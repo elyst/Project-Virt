@@ -32,7 +32,6 @@
 </disk>
 <interface type="bridge">
 <source bridge="virbr0" />
-<mac address="00:00:A3:B0:56:10" />
 </interface>
 <controller index="0" type="ide">
 <address bus="0x00" domain="0x0000" function="0x1" slot="0x01" type="pci" />
