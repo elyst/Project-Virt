@@ -290,7 +290,7 @@ def newSshUser(request, DomainIp, SSHuser):
     #Initialise new user
     NewUser = SSHuser
     NewPassword = generateRandChar(8)
-    GoPath = os.getenv('')
+    GoPath = os.getenv('GOPATH')
 
     #Create user directory
     path = '/{}/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}'.format(GoPath, NewUser)
