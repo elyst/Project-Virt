@@ -47,7 +47,7 @@
                                         </form>
                                         {% endif %}
                                 <form action="/dashboard/my-vm/" method="post">{% csrf_token %}
-                                        <button class="deleteVM" name="deleteVM" value="{{ value.Name }}" class="btn btn-danger"><em class="fa fa-trash"></em></button>
+                                        <button name="deleteVM" value="{{ value.Name }}" class="deleteVM btn btn-danger" data-toggle="modal" data-target="#confirm-submit"><em class="fa fa-trash"></em></button>
                                         </form>                   
                             </td>
                             <td>{{ value.Name }}</td>
@@ -58,8 +58,6 @@
                           {% endfor %} <!-- End for loop -->
                         </tbody>
                 </table>
-            
-              </div>
               <div class="panel-footer">
                 <div class="row">
                        </div>
@@ -71,18 +69,6 @@
             </div>
 
 </div></div></div>
-
-<script>
-  $('#submitBtn').click(function() {
-     $('#deleteVM').text($('#lastname').val());
-     
-});
-
-$('#submit').click(function(){
-    alert('submitting');
-    $('#formfield').submit();
-});
-</script>
 
 
 {% endblock %}

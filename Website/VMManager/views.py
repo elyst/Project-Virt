@@ -190,11 +190,11 @@ def suspend(name):
 
 def deleteVM(name):
     data = VirtualMachine.objects.filter(Name__exact = name)
-    go_path = os.getenv['GOPATH']
+    go_path = os.environ.get('GOPATH')
     for value in data:
         ssh_user = value.SSH_User
     
-    shutil.rmtree('/{}/go/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}'.format(go_path, ssh_user))    
+    shutil.rmtree('{}/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}'.format(go_path, ssh_user))    
     conn = libvirt.open('qemu:///system')
     dom0 = conn.lookupByName(name)
 
