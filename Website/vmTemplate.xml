@@ -1,8 +1,8 @@
 <domain type="kvm">
-<name>Myvm2</name>
-<uuid>94931d8b-5223-4b6f-83f8-e211c8fa1d74</uuid>
-<memory>1000000</memory>
-<currentMemory>1000000</currentMemory>
+<name>JurrezijnVM</name>
+<uuid>b5ea8702-5cd2-4f65-967f-0daa9cd5ab61</uuid>
+<memory>2000000</memory>
+<currentMemory>2000000</currentMemory>
 <vcpu>1</vcpu>
 <os>
 <type>hvm</type>
@@ -19,20 +19,19 @@
 <emulator>/usr/bin/kvm</emulator>
 <disk device="disk" type="file">
 <driver name="qemu" type="qcow2" />
-<source file="/home/jurrewolff/Desktop/images/Myvm2.qcow2" />
+<source file="/home/jurrewolff/Desktop/images/JurrezijnVM.qcow2" />
 <target bus="virtio" dev="vda" />
 <address bus="0x00" domain="0x0000" function="0x0" slot="0x04" type="pci" />
 </disk>
 <disk device="cdrom" type="file">
 <driver name="qemu" type="raw" />
-<source file="/home/jurrewolff/Desktop/iso/ubuntu-16.04.3-server-amd64.iso" />
+<source file="/home/jurrewolff/Desktop/iso/ubuntu-16.04.3-desktop-amd64.iso" />
 <target bus="ide" dev="hdc" />
 <readonly />
 <address bus="1" controller="0" target="0" type="drive" unit="0" />
 </disk>
 <interface type="bridge">
 <source bridge="virbr0" />
-<mac address="00:00:A3:B0:56:10" />
 </interface>
 <controller index="0" type="ide">
 <address bus="0x00" domain="0x0000" function="0x1" slot="0x01" type="pci" />

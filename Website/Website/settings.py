@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bootstrap3',
+    'after_response',
 ]
 
 MIDDLEWARE = [
@@ -146,5 +147,4 @@ LOGIN_URL='/login'
 
 # Set login session timeout to 1 hour
 SESSION_COOKIE_AGE = 3600
-
 

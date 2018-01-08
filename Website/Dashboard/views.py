@@ -1,19 +1,18 @@
-from django.shortcuts import render, HttpResponse, redirect
+from django.shortcuts import render, HttpResponse
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
+from django.contrib.auth.models import User
 
 from . import forms
 from VMManager.views import createNewVM, start, stop, reboot, suspend, deleteVM, VMstate, VMbackup # Add defs 
 from VMManager.models import VirtualMachine
-
-import bs4
+import os
 import os
 import re
+from time import sleep
 
 #COPY OS PATH OVER HERE !!!!!!!!!
 
-OS = ['/home/jurrewolff/Desktop/iso/ubuntu-16.04.3-server-amd64.iso', '/home/jurrewolff/Desktop/iso/linuxmint-18.2-cinnamon-64bit.iso', '/APPLE']
-
+OS = ['/home/jurrewolff/Desktop/iso/ubuntu-16.04.3-desktop-amd64.iso', '/home/jurrewolff/Desktop/iso/linuxmint-18.2-cinnamon-64bit.iso', '/APPLE']
 
 # Create your views here.
 @login_required
@@ -69,7 +68,6 @@ def myVM(request):
         VMstate(user)
         data = VirtualMachine.objects.filter(User__exact=user)
         
-       
         return render(request, 'home/myVM.html', {'data': data})
 
 
@@ -83,7 +81,7 @@ def createVM(request):
     elif request.method == "POST":
         # Populate, verify and process the input data
         form = forms.NewVMForm(request.POST)
-        
+
         #Check which os has been chosen
         options = request.POST.get("options", None)
         if options in ["1", "2", "3"]:
@@ -98,12 +96,9 @@ def createVM(request):
                 form.cleaned_data["RAMAmount"],
                 form.cleaned_data["DiskSize"],
                 OS_Choice) != True:
-                return render(request, "home/CreateVM.html", {'alert' : "danger", 'form': form})   
-        return render(request, "home/CreateVM.html", {'alert' : "success", 'form': form})
-
+                return render(request, "home/CreateVM.html", {'alert' : "danger", 'form': form})
+            return render(request, "home/CreateVM.html", {'alert' : "success", 'form': form})
+   
 @login_required
 def accountInfo(request):
     return HttpResponse("501 Not Implemented")
-      
-
-      
