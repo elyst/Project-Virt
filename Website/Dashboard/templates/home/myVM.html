@@ -47,7 +47,7 @@
                                         </form>
                                         {% endif %}
                                 <form action="/dashboard/my-vm/" method="post">{% csrf_token %}
-                                        <button name="deleteVM" value="{{ value.Name }}" class="btn btn-danger" data-toggle="confirmation"><em class="fa fa-trash"></em></button>
+                                        <button class="deleteVM" name="deleteVM" value="{{ value.Name }}" class="btn btn-danger"><em class="fa fa-trash"></em></button>
                                         </form>                   
                             </td>
                             <td>{{ value.Name }}</td>
@@ -71,6 +71,18 @@
             </div>
 
 </div></div></div>
+
+<script>
+  $('#submitBtn').click(function() {
+     $('#deleteVM').text($('#lastname').val());
+     
+});
+
+$('#submit').click(function(){
+    alert('submitting');
+    $('#formfield').submit();
+});
+</script>
 
 
 {% endblock %}
