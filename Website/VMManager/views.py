@@ -49,6 +49,7 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
         messages.error(request, 'You have reached the maximum amount of Virtual Machines')
         return False
 
+
     #If everything ok, save VM
     vm.save()
 
@@ -176,7 +177,7 @@ def stop(name):
     print(dom0.state())
     
 def reboot(name):
-    stop(Name)
+    stop(name)
     sleep(2)
     start(name)
       
@@ -233,7 +234,11 @@ def VMstate(user):
 def VMIP(request, VMname):
     ip_command = 'for mac in `virsh domiflist {} |grep -o -E "([0-9a-f]{{2}}:){{5}}([0-9a-f]{{2}})"` ; do arp -e |grep $mac  |grep -o -P "^\d{{1,3}}\.\d{{1,3}}\.\d{{1,3}}\.\d{{1,3}}" ; done'.format(VMname)
     result = ""
+    count = 0
     while result == "":
+        if count >= 40:
+            print('failed to get the ip from {}'.format(VMname))
+            break
         result = os.popen(ip_command).read()
         if result != "":
             result = result.replace("\n", "")
@@ -241,6 +246,8 @@ def VMIP(request, VMname):
         else:    
             print('Waiting for ip response of {}...'.format(VMname))
         sleep(5)
+        count += 1
+
     data = VirtualMachine.objects.filter(Name__exact = VMname)
     for value in data:
         SSH_User = value.SSH_User 
