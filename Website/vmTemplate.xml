@@ -1,6 +1,6 @@
 <domain type="kvm">
-<name>hasdjh</name>
-<uuid>f3c20d99-ed76-4819-897b-1f4b39ac942e</uuid>
+<name>qwee</name>
+<uuid>10dc0e4b-d7fb-44b8-9d10-fe61d07227bd</uuid>
 <memory>1000000</memory>
 <currentMemory>1000000</currentMemory>
 <vcpu>1</vcpu>
@@ -19,13 +19,13 @@
 <emulator>/usr/bin/kvm</emulator>
 <disk device="disk" type="file">
 <driver name="qemu" type="qcow2" />
-<source file="/home/jurrewolff/Desktop/images/hasdjh.qcow2" />
+<source file="/home/john/Desktop/images/qwee.qcow2" />
 <target bus="virtio" dev="vda" />
 <address bus="0x00" domain="0x0000" function="0x0" slot="0x04" type="pci" />
 </disk>
 <disk device="cdrom" type="file">
 <driver name="qemu" type="raw" />
-<source file="/home/jurrewolff/Desktop/iso/ubuntu-16.04.3-server-amd64.iso" />
+<source file="/home/john/Desktop/iso/ubuntu-16.04.3-desktop-amd64(1).iso" />
 <target bus="ide" dev="hdc" />
 <readonly />
 <address bus="1" controller="0" target="0" type="drive" unit="0" />
