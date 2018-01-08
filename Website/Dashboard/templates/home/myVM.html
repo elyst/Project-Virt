@@ -25,6 +25,7 @@
                 <th>Date of Creation</th>
                 <th>State</th>
 
+<<<<<<< HEAD
               </tr>
             </thead>
             <tbody>
@@ -44,6 +45,43 @@
                       <em class="fa fa-power-off"></em>
                     </button>
                   </form>
+=======
+                    </tr> 
+                  </thead>
+                  <tbody>
+                                {% for value in data %} <!--Loop through python passed data-->   
+                          <tr>
+                            <td align="center">
+                                        {% if value.State == "Shut down"%}    
+                                <form action="/dashboard/my-vm/" method="post">{% csrf_token %}                    
+                              <button name="start" type="submit" class="btn btn-success" value="{{ value.Name }}"><em class="fa fa-play"></em></button>
+                                </form>
+                                {% elif value.State == "Running"%}
+                                <form action="/dashboard/my-vm/" method="post">{% csrf_token %}
+                                        <button name="stop" type="submit" value="{{ value.Name }}" class="btn btn-danger"><em class="fa fa-pause"></em></button>
+                                </form>
+                                
+                                <form action="/dashboard/my-vm/" method="post">{% csrf_token %}
+                                        <button name="reboot" value="{{ value.Name }}" class="btn btn-warning"><em class="fa fa-refresh"></em></button>
+                                        </form>
+                                        {% endif %}
+                                <form action="/dashboard/my-vm/" method="post">{% csrf_token %}
+                                        <button name="deleteVM" value="{{ value.Name }}" class="deleteVM btn btn-danger" data-toggle="modal" data-target="#confirm-submit"><em class="fa fa-trash"></em></button>
+                                        </form>                   
+                            </td>
+                            <td>{{ value.Name }}</td>
+                            <td>{{ value.SSH_User }}</td>
+                            <td>{{ value.Date }}</td>
+                            <td> {{ value.State }}</td>
+                          </tr>
+                          {% endfor %} <!-- End for loop -->
+                        </tbody>
+                </table>
+              <div class="panel-footer">
+                <div class="row">
+                       </div>
+                  <div class="col col-xs-8">
+>>>>>>> master
 
                   <form action="/dashboard/my-vm/" method="post">{% csrf_token %}
                     <button name="reboot" value="{{ value.Name }}" class="btn btn-warning">

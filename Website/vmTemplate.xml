@@ -1,8 +1,15 @@
 <domain type="kvm">
+<<<<<<< HEAD
 <name>JurrezijnVM</name>
 <uuid>b5ea8702-5cd2-4f65-967f-0daa9cd5ab61</uuid>
 <memory>2000000</memory>
 <currentMemory>2000000</currentMemory>
+=======
+<name>qwee</name>
+<uuid>10dc0e4b-d7fb-44b8-9d10-fe61d07227bd</uuid>
+<memory>1000000</memory>
+<currentMemory>1000000</currentMemory>
+>>>>>>> master
 <vcpu>1</vcpu>
 <os>
 <type>hvm</type>
@@ -19,13 +26,21 @@
 <emulator>/usr/bin/kvm</emulator>
 <disk device="disk" type="file">
 <driver name="qemu" type="qcow2" />
+<<<<<<< HEAD
 <source file="/home/jurrewolff/Desktop/images/JurrezijnVM.qcow2" />
+=======
+<source file="/home/john/Desktop/images/qwee.qcow2" />
+>>>>>>> master
 <target bus="virtio" dev="vda" />
 <address bus="0x00" domain="0x0000" function="0x0" slot="0x04" type="pci" />
 </disk>
 <disk device="cdrom" type="file">
 <driver name="qemu" type="raw" />
+<<<<<<< HEAD
 <source file="/home/jurrewolff/Desktop/iso/ubuntu-16.04.3-desktop-amd64.iso" />
+=======
+<source file="/home/john/Desktop/iso/ubuntu-16.04.3-desktop-amd64(1).iso" />
+>>>>>>> master
 <target bus="ide" dev="hdc" />
 <readonly />
 <address bus="1" controller="0" target="0" type="drive" unit="0" />
