@@ -267,6 +267,17 @@ def newSshUser(request, DomainIp, SSHuser, VMname):
     #Initialise new user
     NewUser = SSHuser
     NewPassword = changeRootPassword(generateRandChar(8), VMname)
+    count = 0
+    while NewPassword == None:
+        if count >= 40:
+            print('It took too long.. sawry bro')
+            break
+        else:
+            print('Waiting for new root password...')
+            sleep(5)
+            count += 1
+
+        
     GoPath = os.getenv('GOPATH')
 
     #Create user directory
