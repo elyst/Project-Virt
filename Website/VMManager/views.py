@@ -51,13 +51,8 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
 
     #If everything ok, save VM
     vm.save()
-
-    os.system(
-        "sudo qemu-img create -f qcow2 /home/john/Desktop/images/{NAME}.qcow2 {SIZE}G".format(
-            NAME = vm.Name,
-            SIZE = vm.DISKSize
-        )
-    )
+    
+    os.system('qemu-img create -f qcow2 -b /home/john/Desktop/base_images/{}.qcow2 /home/john/Desktop/images/{}.qcow2'.format(os_choice, name))
 
     os.system(
         "sudo qemu-img resize /home/john/Desktop/images/{NAME}.qcow2 +{SIZE}G".format(
@@ -101,11 +96,6 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     imagepath = '/home/john/Desktop/images/disk.qcow2'
     imagepath = imagepath.replace('disk', str(nameroot.text))
     root2[1][1].set('file', str(imagepath))
-
-    # Change iso file (This one is the right way)
-    isopath = os_choice # LET OP! OS MOET NOG IN DE FORM WORDEN GEVRAAGD! VERVANG DAN LINUXMINT NAAR 'os'!
-    isopath = isopath.replace('os', str(os_choice))
-    root2[2][1].set('file', str(isopath))
 
     # Change value of network interface
     root4.set('bridge', 'virbr0')           # Bridges have to be automized!
@@ -311,7 +301,7 @@ def generateUser(length):
     return username
 
 
-def changeRootPassword(VMname, password):
+def changeRootPassword(password, VMname):
    
     #Write password to temporary file
     f= open("/tmp/secret","w+")
@@ -319,13 +309,14 @@ def changeRootPassword(VMname, password):
     f.close()
     
     #change root password
-    os.system('sudo virt-sysprep --password root:file:/tmp/secret -a /home/john/Desktop/images{}.qcow2'.format(VMname))
+    os.system('sudo virt-sysprep --password root:file:/tmp/secret -a /home/john/Desktop/images/{}.qcow2'.format(VMname))
     
     #sleep for a while zzzz..
     sleep(10)
 
     #delete temp password
     os.system('sudo rm /tmp/secret')
+    print('Successfully changed root password!')
 
 
 
