@@ -10,7 +10,7 @@ import os
 import re
 from time import sleep
 
-#COPY OS PATH OVER HERE !!!!!!!!!
+#COPY OS NAME OVER HERE !!!!!!!!!
 
 OS = ['ubuntu', 'mint', 'apple']
 
@@ -100,6 +100,7 @@ def createVM(request):
 @login_required
 def accountInfo(request):
     return HttpResponse("501 Not Implemented")
+    
 
 
 
