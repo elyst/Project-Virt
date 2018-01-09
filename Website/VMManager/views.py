@@ -249,7 +249,7 @@ def sendMail(request, ssh_user, temp_password, ssh_credentials):
     for value in data:
         user_email = value.email
 
-    body = '{} \n {} \n {}'.format(ssh_user, temp_password, ssh_credentials)    
+    body = 'ssh username: {} \n root/ssh password: {} \n login like this: {}'.format(ssh_user, temp_password, ssh_credentials)    
     email = EmailMessage('Credentials VMX Virtual Machine', body, to=[user_email])
     email.send()
       
@@ -267,6 +267,17 @@ def newSshUser(request, DomainIp, SSHuser, VMname):
     #Initialise new user
     NewUser = SSHuser
     NewPassword = changeRootPassword(generateRandChar(8), VMname)
+    count = 0
+    while NewPassword == None:
+        if count >= 40:
+            print('It took too long.. sawry bro')
+            break
+        else:
+            print('Waiting for new root password...')
+            sleep(5)
+            count += 1
+
+        
     GoPath = os.getenv('GOPATH')
 
     #Create user directory
@@ -317,6 +328,7 @@ def changeRootPassword(password, VMname):
     #delete temp password
     os.system('sudo rm /tmp/secret')
     print('Successfully changed root password!')
+    return password
 
 
 
