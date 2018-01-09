@@ -249,7 +249,7 @@ def sendMail(request, ssh_user, temp_password, ssh_credentials):
     for value in data:
         user_email = value.email
 
-    body = '{} \n {} \n {}'.format(ssh_user, temp_password, ssh_credentials)    
+    body = 'ssh username: {} \n root/ssh password: {} \n login like this: {}'.format(ssh_user, temp_password, ssh_credentials)    
     email = EmailMessage('Credentials VMX Virtual Machine', body, to=[user_email])
     email.send()
       
