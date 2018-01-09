@@ -317,6 +317,7 @@ def changeRootPassword(password, VMname):
     #delete temp password
     os.system('sudo rm /tmp/secret')
     print('Successfully changed root password!')
+    return password
 
 
 
