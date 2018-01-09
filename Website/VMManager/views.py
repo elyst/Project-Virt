@@ -319,7 +319,7 @@ def changeRootPassword(VMname, password):
     f.close()
     
     #change root password
-    os.system('sudo virt-sysprep --password root:file:/tmp/secret -a {}.qcow2'.format(VMname))
+    os.system('sudo virt-sysprep --password root:file:/tmp/secret -a /home/john/Desktop/images{}.qcow2'.format(VMname))
     
     #sleep for a while zzzz..
     sleep(10)

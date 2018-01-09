@@ -39,7 +39,7 @@
                                 </form>
                                 {% elif value.State == "Running"%}
                                 <form action="/dashboard/my-vm/" method="post">{% csrf_token %}
-                                        <button name="stop" type="submit" value="{{ value.Name }}" class="btn btn-danger"><em class="fa fa-pause"></em></button>
+                                        <button name="stop" type="submit" value="{{ value.Name }}" class="btn btn-danger"><em class="fa fa-stop"></em></button>
                                 </form>
                                 
                                 <form action="/dashboard/my-vm/" method="post">{% csrf_token %}
@@ -47,7 +47,7 @@
                                         </form>
                                         {% endif %}
                                 <form action="/dashboard/my-vm/" method="post">{% csrf_token %}
-                                        <button name="deleteVM" value="{{ value.Name }}" class="deleteVM btn btn-danger" data-toggle="modal" data-target="#confirm-submit"><em class="fa fa-trash"></em></button>
+                                        <button name="deleteVM" value="{{ value.Name }}" class="deleteVM btn btn-danger"><em class="fa fa-trash"></em></button>
                                         </form>                   
                             </td>
                             <td>{{ value.Name }}</td>
