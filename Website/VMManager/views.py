@@ -43,7 +43,7 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     vm.CPUCores = cores
     vm.RAMAmount = ram
     vm.DISKSize = storage
-    vm.SSH_User = generateRandChar(5) 
+    vm.SSH_User = generateUser(5)
     
     #Check for duplicate names in Database
     if duplicates('Name', vm.Name, 1) != True:
@@ -58,13 +58,8 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
 
     #If everything ok, save VM
     vm.save()
-
-    os.system(
-        "sudo qemu-img create -f qcow2 /home/jurrewolff/Desktop/images/{NAME}.qcow2 {SIZE}G".format(
-            NAME = vm.Name,
-            SIZE = vm.DISKSize
-        )
-    )
+    
+    os.system('qemu-img create -f qcow2 -b /home/jurrewolff/Desktop/base_images/{}.qcow2 /home/jurrewolff/Desktop/images/{}.qcow2'.format(os_choice, name))
 
     os.system(
         "sudo qemu-img resize /home/jurrewolff/Desktop/images/{NAME}.qcow2 +{SIZE}G".format(
@@ -108,11 +103,6 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     imagepath = '/home/jurrewolff/Desktop/images/disk.qcow2'
     imagepath = imagepath.replace('disk', str(nameroot.text))
     root2[1][1].set('file', str(imagepath))
-
-    # Change iso file (This one is the right way)
-    isopath = os_choice
-    isopath = isopath.replace('os', str(os_choice))
-    root2[2][1].set('file', str(isopath))
 
     # Change value of network interface
     root4.set('bridge', 'virbr0')
@@ -277,7 +267,7 @@ def VMIP(request, VMname):
     data = VirtualMachine.objects.filter(Name__exact = VMname)
     for value in data:
         SSH_User = value.SSH_User 
-    newSshUser(request, result, SSH_User)
+    newSshUser(request, result, SSH_User, VMname)
 
 #Send email with credentials when vm is created
 def sendMail(request, ssh_user, temp_password, ssh_credentials):
@@ -286,7 +276,7 @@ def sendMail(request, ssh_user, temp_password, ssh_credentials):
     for value in data:
         user_email = value.email
 
-    body = '{} \n {} \n {}'.format(ssh_user, temp_password, ssh_credentials)    
+    body = 'ssh username: {} \n root/ssh password: {} \n login like this: {}'.format(ssh_user, temp_password, ssh_credentials)    
     email = EmailMessage('Credentials VMX Virtual Machine', body, to=[user_email])
     email.send()
       
@@ -296,11 +286,25 @@ def generateRandChar(amount):
 
 
 #Create new sshUser for specific VM
-def newSshUser(request, DomainIp, SSHuser):
+def newSshUser(request, DomainIp, SSHuser, VMname):
     
+    #stop vm
+    stop(VMname)
+
     #Initialise new user
     NewUser = SSHuser
-    NewPassword = generateRandChar(8)
+    NewPassword = changeRootPassword(generateRandChar(8), VMname)
+    count = 0
+    while NewPassword == None:
+        if count >= 40:
+            print('It took too long.. sawry bro')
+            break
+        else:
+            print('Waiting for new root password...')
+            sleep(5)
+            count += 1
+
+        
     GoPath = os.getenv('GOPATH')
 
     #Create user directory
@@ -315,5 +319,40 @@ def newSshUser(request, DomainIp, SSHuser):
     os.system('chmod 400 {}/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}/sshpiper_upstream'.format(GoPath,NewUser))
 
     ssh_credentials = "ssh {}@127.0.0.1 -p 2222".format(SSHuser)
-
+    
     sendMail(request, NewUser, NewPassword, ssh_credentials)
+
+    #spin up vm!
+    start(VMname)
+
+
+
+def generateUser(length):
+    Alphabet= 'abcdefghijklmnopqrstuvwxyz'
+    username = ''
+    count = 0
+    while count != length:
+        letter = random.choice(Alphabet)
+        username = username + letter
+        count += 1
+
+    return username
+
+
+def changeRootPassword(password, VMname):
+   
+    #Write password to temporary file
+    f= open("/tmp/secret","w+")
+    f.write(password)
+    f.close()
+    
+    #change root password
+    os.system('sudo virt-sysprep --password root:file:/tmp/secret -a /home/john/Desktop/images/{}.qcow2'.format(VMname))
+    
+    #sleep for a while zzzz..
+    sleep(10)
+
+    #delete temp password
+    os.system('sudo rm /tmp/secret')
+    print('Successfully changed root password!')
+    return password
