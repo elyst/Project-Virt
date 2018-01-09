@@ -13,11 +13,18 @@ Disk_Choices = [
     (20, '20 GB'),
     (40, '40 GB'),
     (80, '80 GB'),
-    ]   
+    ]
+
+Backup_Choices = [
+    ('daily', "Daily"),
+    ('weekly', "Weekly"),
+    ('monthly', "Monthly"),
+    ] 
 
 class NewVMForm(forms.Form):
     VirtualMachineName = forms.CharField(label="Name")
     CPUCores = forms.IntegerField(label="CPU Cores", widget=forms.Select(choices=CPU_Choices))
     RAMAmount = forms.IntegerField(label="Amount of RAM", widget=forms.Select(choices=RAM_Choices))
     DiskSize = forms.IntegerField(label="Disk Size", widget=forms.Select(choices=Disk_Choices))
+    Backupinterval = forms.IntegerField(label="Backup interval", widget=forms.Select(choices=Backup_Choices))
     

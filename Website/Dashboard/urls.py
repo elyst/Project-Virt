@@ -7,4 +7,5 @@ urlpatterns = [
     url(r'my-vm/$', views.myVM),
     url(r'^vm-create/$', views.createVM),
     url(r'^account/$', views.accountInfo)
+    
 ]

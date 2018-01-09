@@ -22,9 +22,9 @@ import xml.etree.ElementTree as ET
 import uuid
 import libvirt
 import os
-import time
+import time, threading
 import datetime
-
+import schedule
 
 # Create your views here.
 def index(request):
@@ -115,7 +115,7 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     root2[2][1].set('file', str(isopath))
 
     # Change value of network interface
-    root4.set('bridge', 'virbr0')           # Bridges have to be automized!
+    root4.set('bridge', 'virbr0')
 
     # Write changes to XML file
     tree.write('vmTemplate.xml')
@@ -157,7 +157,7 @@ def duplicates(field, name, counter):
 
 def maximum(user, ram):
     #PYLINT REGISTERS AN ERROR OVER HERE. JUST IGNORE THAT, IT IS NO ERROR
-    data = VirtualMachine.objects.filter(User__exact=user)
+    data = VirtualMachine.objecdailyts.filter(User__exact=user)
     count = 0
     test = []
     for each in data:
@@ -235,14 +235,25 @@ def VMstate(user):
             value.State = 'Suspended'
             value.save()
 
+def backupSchedule(interval, name):
+    if interval ==  'daily':
+        schedule.every().day.at('12:30').do(VMbackup(name))
+    if interval == 'weekly':
+        schedule.every().week.do(VMbackup(name))
+    if interval == 'monthly':
+        schedule.every().month.do(VMbackup(name))
+        
 def VMbackup(name):
     conn = libvirt.open('qemu:///system')
     dom0 = conn.lookupByName(name)
 
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S") # Timestamp for new backup name
+
+    # Build backup file name and including date
     bName = name
     bName += '_'
     bName += timestamp
+
     os.system('cp /home/jurrewolff/Desktop/images/{DISK}.qcow2 /home/jurrewolff/Desktop/backups/{BNAME}.qcow2'.format(DISK = name, BNAME = bName))
     
 @after_response.enable
@@ -295,16 +306,14 @@ def newSshUser(request, DomainIp, SSHuser):
     #Create user directory
     path = '/{}/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}'.format(GoPath, NewUser)
     pathlib.Path(path).mkdir(parents=True, exist_ok=True)
-    os.system('chmod 755 /{}/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}'.format(GoPath,NewUser))
+    os.system('chmod 755 {}/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}'.format(GoPath,NewUser))
 
     #Create ssh connection credentials
     f= open("{}/sshpiper_upstream".format(path),"w+")
     f.write("root@{}:22".format(DomainIp))
     f.close()
-    os.system('chmod 400 /{}/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}/sshpiper_upstream'.format(GoPath,NewUser))
+    os.system('chmod 400 {}/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}/sshpiper_upstream'.format(GoPath,NewUser))
 
     ssh_credentials = "ssh {}@127.0.0.1 -p 2222".format(SSHuser)
 
     sendMail(request, NewUser, NewPassword, ssh_credentials)
-
-  
