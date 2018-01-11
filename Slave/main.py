@@ -10,7 +10,7 @@ def readConfig(file):
     config.read(file)
 
     # Check if needed sections are in config
-    if 'GENERAL' not in config:
+    if ('GENERAL' or 'RESOURCES') not in config:
         print ("Invalid Config found, could not find section GENERAL")
         sys.exit(-1)
 
