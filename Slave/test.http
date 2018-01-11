@@ -1,0 +1,21 @@
+
+GET http://localhost:5000/ HTTP/1.1
+
+###
+
+POST http://localhost:5000/V1.0/createvm HTTP/1.1
+Content-Type: application/json
+
+{
+    "cores": 2,
+    "memory": 200,
+    "storage": 20,
+    "name": "VM"    
+}
+
+###
+
+POST http://localhost:5000/V1.0/reboot HTTP/1.1
+Content-Type: application/json
+
+{"uuid": "fb429318-274c-49c6-9c59-9b6c230af345"}
