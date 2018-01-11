@@ -58,6 +58,17 @@ class API:
         }
 
         return info
+
+    # Constucts a list of vm's and their data
+    def listVM(self):
+        vmlist = []
+
+        for vm in self.vmstack:
+            vmlist.append(
+                vm.getProperties()
+            )
+
+        return Response(Status.SUCCESS, "Succesfully gathered data", data={"list": vmlist}).respond()
     
     # Calculates the total resources used by the existing vm's and
     # returns True or False based on if the new vm will still fit on

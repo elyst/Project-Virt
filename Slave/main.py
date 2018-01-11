@@ -45,6 +45,10 @@ def constructRoutes(app, data):
     def rebootvm():
         return api.rebootVM(byteToJson(request.data))
 
+    @app.route(base_api + "list", methods=["GET"])
+    def getInfo():
+        return api.listVM()
+
     
 
 def start(app):
