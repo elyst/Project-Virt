@@ -39,7 +39,7 @@
                                 </form>
                                 {% elif value.State == "Running"%}
                                 <form action="/dashboard/my-vm/" method="post">{% csrf_token %}
-                                        <button name="stop" type="submit" value="{{ value.Name }}" class="btn btn-danger"><em class="fa fa-pause"></em></button>
+                                        <button name="stop" type="submit" value="{{ value.Name }}" class="btn btn-danger"><em class="fa fa-stop"></em></button>
                                 </form>
                                 
                                 <form action="/dashboard/my-vm/" method="post">{% csrf_token %}
@@ -47,7 +47,7 @@
                                         </form>
                                         {% endif %}
                                 <form action="/dashboard/my-vm/" method="post">{% csrf_token %}
-                                        <button name="deleteVM" value="{{ value.Name }}" class="btn btn-danger" data-toggle="confirmation"><em class="fa fa-trash"></em></button>
+                                        <button name="deleteVM" value="{{ value.Name }}" class="deleteVM btn btn-danger"><em class="fa fa-trash"></em></button>
                                         </form>                   
                             </td>
                             <td>{{ value.Name }}</td>
@@ -58,8 +58,6 @@
                           {% endfor %} <!-- End for loop -->
                         </tbody>
                 </table>
-            
-              </div>
               <div class="panel-footer">
                 <div class="row">
                        </div>

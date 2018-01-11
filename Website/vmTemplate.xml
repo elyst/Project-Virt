@@ -1,6 +1,6 @@
 <domain type="kvm">
-<name>hasdjh</name>
-<uuid>f3c20d99-ed76-4819-897b-1f4b39ac942e</uuid>
+<name>kaasstengel</name>
+<uuid>118c973f-29f5-4353-acfc-7f9c3c23a250</uuid>
 <memory>1000000</memory>
 <currentMemory>1000000</currentMemory>
 <vcpu>1</vcpu>
@@ -19,20 +19,12 @@
 <emulator>/usr/bin/kvm</emulator>
 <disk device="disk" type="file">
 <driver name="qemu" type="qcow2" />
-<source file="/home/jurrewolff/Desktop/images/hasdjh.qcow2" />
+<source file="/home/john/Desktop/images/kaasstengel.qcow2" />
 <target bus="virtio" dev="vda" />
 <address bus="0x00" domain="0x0000" function="0x0" slot="0x04" type="pci" />
 </disk>
-<disk device="cdrom" type="file">
-<driver name="qemu" type="raw" />
-<source file="/home/jurrewolff/Desktop/iso/ubuntu-16.04.3-server-amd64.iso" />
-<target bus="ide" dev="hdc" />
-<readonly />
-<address bus="1" controller="0" target="0" type="drive" unit="0" />
-</disk>
 <interface type="bridge">
 <source bridge="virbr0" />
-<mac address="00:00:A3:B0:56:10" />
 </interface>
 <controller index="0" type="ide">
 <address bus="0x00" domain="0x0000" function="0x1" slot="0x01" type="pci" />

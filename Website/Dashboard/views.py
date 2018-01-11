@@ -12,7 +12,7 @@ from time import sleep
 
 #COPY OS PATH OVER HERE !!!!!!!!!
 
-OS = ['/home/john/Desktop/iso/ubuntu-16.04.3-desktop-amd64(1).iso', '/home/jurrewolff/Desktop/iso/linuxmint-18.2-cinnamon-64bit.iso', '/APPLE']
+OS = ['ubuntu', 'mint', 'apple']
 
 
 # Create your views here.

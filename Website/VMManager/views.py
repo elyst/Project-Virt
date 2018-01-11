@@ -19,7 +19,6 @@ from django.core.mail import EmailMessage
 
 from .models import VirtualMachine
 
-
 # Create your views here.
 def index(request):
     return HttpResponse("VMManager works")
@@ -37,7 +36,7 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     vm.CPUCores = cores
     vm.RAMAmount = ram
     vm.DISKSize = storage
-    vm.SSH_User = generateRandChar(5) 
+    vm.SSH_User = generateUser(5)
     
     #Check for duplicate names in Database
     if duplicates('Name', vm.Name, 1) != True:
@@ -49,15 +48,11 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
         messages.error(request, 'You have reached the maximum amount of Virtual Machines')
         return False
 
+
     #If everything ok, save VM
     vm.save()
-
-    os.system(
-        "sudo qemu-img create -f qcow2 /home/john/Desktop/images/{NAME}.qcow2 {SIZE}G".format(
-            NAME = vm.Name,
-            SIZE = vm.DISKSize
-        )
-    )
+    
+    os.system('qemu-img create -f qcow2 -b /home/john/Desktop/base_images/{}.qcow2 /home/john/Desktop/images/{}.qcow2'.format(os_choice, name))
 
     os.system(
         "sudo qemu-img resize /home/john/Desktop/images/{NAME}.qcow2 +{SIZE}G".format(
@@ -101,11 +96,6 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     imagepath = '/home/john/Desktop/images/disk.qcow2'
     imagepath = imagepath.replace('disk', str(nameroot.text))
     root2[1][1].set('file', str(imagepath))
-
-    # Change iso file (This one is the right way)
-    isopath = os_choice # LET OP! OS MOET NOG IN DE FORM WORDEN GEVRAAGD! VERVANG DAN LINUXMINT NAAR 'os'!
-    isopath = isopath.replace('os', str(os_choice))
-    root2[2][1].set('file', str(isopath))
 
     # Change value of network interface
     root4.set('bridge', 'virbr0')           # Bridges have to be automized!
@@ -176,7 +166,7 @@ def stop(name):
     print(dom0.state())
     
 def reboot(name):
-    stop(Name)
+    stop(name)
     sleep(2)
     start(name)
       
@@ -189,11 +179,11 @@ def suspend(name):
 
 def deleteVM(name):
     data = VirtualMachine.objects.filter(Name__exact = name)
-    go_path = os.getenv['GOPATH']
+    go_path = os.environ.get('GOPATH')
     for value in data:
         ssh_user = value.SSH_User
     
-    shutil.rmtree('/{}/go/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}'.format(go_path, ssh_user))    
+    shutil.rmtree('{}/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}'.format(go_path, ssh_user))    
     conn = libvirt.open('qemu:///system')
     dom0 = conn.lookupByName(name)
 
@@ -233,7 +223,11 @@ def VMstate(user):
 def VMIP(request, VMname):
     ip_command = 'for mac in `virsh domiflist {} |grep -o -E "([0-9a-f]{{2}}:){{5}}([0-9a-f]{{2}})"` ; do arp -e |grep $mac  |grep -o -P "^\d{{1,3}}\.\d{{1,3}}\.\d{{1,3}}\.\d{{1,3}}" ; done'.format(VMname)
     result = ""
+    count = 0
     while result == "":
+        if count >= 40:
+            print('failed to get the ip from {}'.format(VMname))
+            break
         result = os.popen(ip_command).read()
         if result != "":
             result = result.replace("\n", "")
@@ -241,10 +235,12 @@ def VMIP(request, VMname):
         else:    
             print('Waiting for ip response of {}...'.format(VMname))
         sleep(5)
+        count += 1
+
     data = VirtualMachine.objects.filter(Name__exact = VMname)
     for value in data:
         SSH_User = value.SSH_User 
-    newSshUser(request, result, SSH_User)
+    newSshUser(request, result, SSH_User, VMname)
 
 #Send email with credentials when vm is created
 def sendMail(request, ssh_user, temp_password, ssh_credentials):
@@ -253,7 +249,7 @@ def sendMail(request, ssh_user, temp_password, ssh_credentials):
     for value in data:
         user_email = value.email
 
-    body = '{} \n {} \n {}'.format(ssh_user, temp_password, ssh_credentials)    
+    body = 'ssh username: {} \n root/ssh password: {} \n login like this: {}'.format(ssh_user, temp_password, ssh_credentials)    
     email = EmailMessage('Credentials VMX Virtual Machine', body, to=[user_email])
     email.send()
       
@@ -263,11 +259,25 @@ def generateRandChar(amount):
 
 
 #Create new sshUser for specific VM
-def newSshUser(request, DomainIp, SSHuser):
+def newSshUser(request, DomainIp, SSHuser, VMname):
     
+    #stop vm
+    stop(VMname)
+
     #Initialise new user
     NewUser = SSHuser
-    NewPassword = generateRandChar(8)
+    NewPassword = changeRootPassword(generateRandChar(8), VMname)
+    count = 0
+    while NewPassword == None:
+        if count >= 40:
+            print('It took too long.. sawry bro')
+            break
+        else:
+            print('Waiting for new root password...')
+            sleep(5)
+            count += 1
+
+        
     GoPath = os.getenv('GOPATH')
 
     #Create user directory
@@ -282,7 +292,48 @@ def newSshUser(request, DomainIp, SSHuser):
     os.system('chmod 400 /{}/src/github.com/tg123/sshpiper/sshpiperd/example/workingdir/{}/sshpiper_upstream'.format(GoPath,NewUser))
 
     ssh_credentials = "ssh {}@127.0.0.1 -p 2222".format(SSHuser)
-
+    
     sendMail(request, NewUser, NewPassword, ssh_credentials)
+
+    #spin up vm!
+    start(VMname)
+
+
+
+def generateUser(length):
+    Alphabet= 'abcdefghijklmnopqrstuvwxyz'
+    username = ''
+    count = 0
+    while count != length:
+        letter = random.choice(Alphabet)
+        username = username + letter
+        count += 1
+
+    return username
+
+
+def changeRootPassword(password, VMname):
+   
+    #Write password to temporary file
+    f= open("/tmp/secret","w+")
+    f.write(password)
+    f.close()
+    
+    #change root password
+    os.system('sudo virt-sysprep --password root:file:/tmp/secret -a /home/john/Desktop/images/{}.qcow2'.format(VMname))
+    
+    #sleep for a while zzzz..
+    sleep(10)
+
+    #delete temp password
+    os.system('sudo rm /tmp/secret')
+    print('Successfully changed root password!')
+    return password
+
+
+
+    
+    
+        
 
   
