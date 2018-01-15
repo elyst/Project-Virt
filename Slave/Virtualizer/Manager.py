@@ -82,6 +82,11 @@ class VirtualManager():
         try:
             conn = libvirt.open("qemu:///system")
             dom = conn.lookupByUUIDString(vm.uuid)
+            dom.undefine()
+
+            os.system("rm -rf {}/{}.qcow2".format(self.diskpath, vm.name))
+
+
             return True
         except:
             return False

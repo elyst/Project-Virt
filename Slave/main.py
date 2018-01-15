@@ -60,7 +60,7 @@ def constructRoutes(app, data):
 
     @app.route(base_api + "destroy", methods=["POST"])
     def destroyvm():
-        return api.destroyVMI(byteToJson(request.data))
+        return api.destroyVM(byteToJson(request.data))
 
     @app.route(base_api + "list", methods=["GET"])
     def getInfo():
