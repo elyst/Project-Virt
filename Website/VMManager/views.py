@@ -22,7 +22,7 @@ import xml.etree.ElementTree as ET
 import uuid
 import libvirt
 import os
-import time, threading
+import time
 import datetime
 import schedule
 
@@ -31,9 +31,9 @@ def index(request):
     return HttpResponse("VMManager works")
 
 @login_required
-def createNewVM(request, name, cores, ram, storage, os_choice):
+def createNewVM(request, name, cores, ram, storage, backup, os_choice):
     
-    #Initialise VM model
+    #Initialise VM model for database
     vm = VirtualMachine()
     
     #Save VM information
@@ -43,8 +43,9 @@ def createNewVM(request, name, cores, ram, storage, os_choice):
     vm.CPUCores = cores
     vm.RAMAmount = ram
     vm.DISKSize = storage
+    vm.Backupinterval = backup
     vm.SSH_User = generateUser(5)
-    
+
     #Check for duplicate names in Database
     if duplicates('Name', vm.Name, 1) != True:
         messages.error(request, 'A Virtual Machine with this name already exists')
@@ -147,7 +148,7 @@ def duplicates(field, name, counter):
 
 def maximum(user, ram):
     #PYLINT REGISTERS AN ERROR OVER HERE. JUST IGNORE THAT, IT IS NO ERROR
-    data = VirtualMachine.objecdailyts.filter(User__exact=user)
+    data = VirtualMachine.objects.filter(User__exact=user)
     count = 0
     test = []
     for each in data:
@@ -225,14 +226,24 @@ def VMstate(user):
             value.State = 'Suspended'
             value.save()
 
-def backupSchedule(interval, name):
+def backupSchedule(interval, name, btoggle):
     if interval ==  'daily':
-        schedule.every().day.at('12:30').do(VMbackup(name))
+        schedule.every().day.at('00:00').do(VMbackup, name)
+        print("Daily backup for virtual machine '"+name+"' is scheduled!")
+
     if interval == 'weekly':
-        schedule.every().week.do(VMbackup(name))
+        schedule.every().wednesday.at('00:00').do(VMbackup, name)
+        print("Weekly backup for virtual machine '"+name+"' is scheduled!")
+
     if interval == 'monthly':
-        schedule.every().month.do(VMbackup(name))
-        
+        schedule.every(4).weeks.do(VMbackup, name)
+        print("Monthly backup for virtual machine '"+name+"' is scheduled!")
+    
+    # Makes ALL schedules tick
+    while btoggle == True:
+        schedule.run_pending()
+        time.sleep(1)
+
 def VMbackup(name):
     conn = libvirt.open('qemu:///system')
     dom0 = conn.lookupByName(name)
@@ -245,7 +256,8 @@ def VMbackup(name):
     bName += timestamp
 
     os.system('cp /home/jurrewolff/Desktop/images/{DISK}.qcow2 /home/jurrewolff/Desktop/backups/{BNAME}.qcow2'.format(DISK = name, BNAME = bName))
-    
+    print("Backup for virtual machine '"+name+"' has been made.")
+
 @after_response.enable
 def VMIP(request, VMname):
     ip_command = 'for mac in `virsh domiflist {} |grep -o -E "([0-9a-f]{{2}}:){{5}}([0-9a-f]{{2}})"` ; do arp -e |grep $mac  |grep -o -P "^\d{{1,3}}\.\d{{1,3}}\.\d{{1,3}}\.\d{{1,3}}" ; done'.format(VMname)
@@ -347,7 +359,7 @@ def changeRootPassword(password, VMname):
     f.close()
     
     #change root password
-    os.system('sudo virt-sysprep --password root:file:/tmp/secret -a /home/john/Desktop/images/{}.qcow2'.format(VMname))
+    os.system('sudo virt-sysprep --password root:file:/tmp/secret -a /home/jurrewolff/Desktop/images/{}.qcow2'.format(VMname))
     
     #sleep for a while zzzz..
     sleep(10)

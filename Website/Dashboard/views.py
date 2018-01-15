@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
 from . import forms
-from VMManager.views import createNewVM, start, stop, reboot, suspend, deleteVM, VMstate, VMbackup # Add defs 
+from VMManager.views import createNewVM, start, stop, reboot, suspend, deleteVM, VMstate, VMbackup, backupSchedule # Add defs 
 from VMManager.models import VirtualMachine
 import os
 import os
@@ -12,7 +12,7 @@ from time import sleep
 
 #COPY OS PATH OVER HERE !!!!!!!!!
 
-OS = ['ubuntu', 'mint', 'apple']
+OS = ['Ubuntu', 'mint', 'apple']
 
 
 # Create your views here.
@@ -61,10 +61,21 @@ def myVM(request):
             name = request.POST.get("deleteVM", None)
             print("deletetet")
             deleteVM(name) 
-        elif request.POST.get("VMbackup", None):
-            name = request.POST.get("VMbackup", None)
-            VMbackup(name)
-            print('Backup made')
+        elif request.POST.get("backupSchedule", None):
+            name = request.POST.get("backupSchedule", None)
+            data = VirtualMachine.objects.filter(User__exact=user)
+            btoggle = True
+
+            # Go through user's database and find interval set for specific VM
+            for value in data:                      
+                if value.Name == name:      # Finds correct vm where interval will be extracted from
+                    interval = value.Backupinterval
+
+            backupSchedule(interval, name, btoggle)
+            
+        elif request.POST.get("resetBackup", None): 
+            btoggle = False
+            backupSchedule(btoggle)
 
         VMstate(user)
         data = VirtualMachine.objects.filter(User__exact=user)
@@ -96,10 +107,11 @@ def createVM(request):
                 form.cleaned_data["CPUCores"],
                 form.cleaned_data["RAMAmount"],
                 form.cleaned_data["DiskSize"],
+                form.cleaned_data["Backupinterval"],
                 OS_Choice) != True:
                 return render(request, "home/CreateVM.html", {'alert' : "danger", 'form': form})
             return render(request, "home/CreateVM.html", {'alert' : "success", 'form': form})
-   
+               
 @login_required
 def accountInfo(request):
     return HttpResponse("501 Not Implemented")

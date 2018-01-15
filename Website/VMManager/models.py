@@ -12,6 +12,7 @@ class VirtualMachine(models.Model):
     State = models.CharField(default="running", max_length= 50)
     Date = models.DateTimeField(auto_now_add=True)
     SSH_User = models.CharField(default="null", max_length=5)
+    Backupinterval = models.CharField(max_length=255)
 
 
 admin.site.register(VirtualMachine)

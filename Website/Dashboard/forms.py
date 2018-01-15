@@ -26,5 +26,7 @@ class NewVMForm(forms.Form):
     CPUCores = forms.IntegerField(label="CPU Cores", widget=forms.Select(choices=CPU_Choices))
     RAMAmount = forms.IntegerField(label="Amount of RAM", widget=forms.Select(choices=RAM_Choices))
     DiskSize = forms.IntegerField(label="Disk Size", widget=forms.Select(choices=Disk_Choices))
-    Backupinterval = forms.IntegerField(label="Backup interval", widget=forms.Select(choices=Backup_Choices))
-    
+    Backupinterval = forms.CharField(label="Backup interval", widget=forms.Select(choices=Backup_Choices))
+
+class backupForm(forms.Form):
+    Backupinterval = forms.CharField(label="Backup interval", widget=forms.Select(choices=Backup_Choices))

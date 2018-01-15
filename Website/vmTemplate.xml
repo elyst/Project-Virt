@@ -1,6 +1,6 @@
 <domain type="kvm">
-<name>kaasstengel</name>
-<uuid>118c973f-29f5-4353-acfc-7f9c3c23a250</uuid>
+<name>Servertest-week</name>
+<uuid>99833727-1b58-4a7b-8980-566e2e5f16f2</uuid>
 <memory>1000000</memory>
 <currentMemory>1000000</currentMemory>
 <vcpu>1</vcpu>
@@ -19,7 +19,7 @@
 <emulator>/usr/bin/kvm</emulator>
 <disk device="disk" type="file">
 <driver name="qemu" type="qcow2" />
-<source file="/home/john/Desktop/images/kaasstengel.qcow2" />
+<source file="/home/jurrewolff/Desktop/images/Servertest-week.qcow2" />
 <target bus="virtio" dev="vda" />
 <address bus="0x00" domain="0x0000" function="0x0" slot="0x04" type="pci" />
 </disk>

@@ -1,15 +1,8 @@
-<!DOCTYPE html>
-<html>
+{% extends "dashboard.html" %}{% load bootstrap3 %} {% load static %} {% bootstrap_css %} {% block pagename %}backup{% endblock %} {% block sub-content %} 
 
-<head>
-    <title>Testpage</title>
-</head>
+<form action="/dashboard/backup/" method="post">
+    {% csrf_token %}
+    <input type="submit" class="btn" value="Start backing up!" name="mybtn">
+   </form>
 
-<body>
-
-    <h1>Grote letters</h1>
-    <p>Kleinere letters</p>
-
-</body>
-
-</html>
+{% endblock %}
