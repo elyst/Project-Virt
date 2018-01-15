@@ -106,6 +106,7 @@ class API:
             return Response(Status.FAILURE, "VM Not Found").respond()
             
         except Exception as e:
+            print (e)
             return Response(Status.FAILURE, "Exception while trying to " + function, {"exception": str(e)}).respond()
 
     # Function for cerating a vm using provided data, it creates an object

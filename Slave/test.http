@@ -10,7 +10,7 @@ Content-Type: application/json
     "cores": 2,
     "memory": 200,
     "storage": 20,
-    "name": "newname",
+    "name": "gewonenaam",
     "os": "ubuntu"
 }
 
@@ -19,7 +19,21 @@ Content-Type: application/json
 POST http://localhost:5000/V1.0/reboot HTTP/1.1
 Content-Type: application/json
 
-{"uuid": "fb429318-274c-49c6-9c59-9b6c230af345"}
+{"uuid": "3b2690aa-81ac-490f-a111-0af73b9694a4"}
+
+###
+
+POST http://localhost:5000/V1.0/shutdown HTTP/1.1
+Content-Type: application/json
+
+{"uuid": "3b2690aa-81ac-490f-a111-0af73b9694a4"}
+
+###
+
+POST http://localhost:5000/V1.0/start HTTP/1.1
+Content-Type: application/json
+
+{"uuid": "3b2690aa-81ac-490f-a111-0af73b9694a4"}
 
 ###
 

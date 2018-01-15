@@ -47,16 +47,41 @@ class VirtualManager():
     
     def rebootVM(self, vm):
         # Code to reboot VM
-        return
+        try:
+            conn = libvirt.open("qemu:///system")
+            
+            self.shutdownVM(vm)
+            self.startVM(vm)
+
+            return True
+        except:
+            return False
 
     def shutdownVM(self, vm):
         # Shutdown VM
-        return
+        try:
+            conn = libvirt.open("qemu:///system")
+            dom = conn.lookupByUUIDString(vm.uuid)
+            dom.destroy()
+            return True
+        except:
+            return False
     
     def startVM(self, vm):
-        # Start VM
-        return
+        try:
+            conn = libvirt.open("qemu:///system")
+            dom = conn.lookupByUUIDString(vm.uuid)
+            dom.create()
+            return True
+        except:
+            return False
+
 
     def destroyVM(self, vm):
         # Destroy VM
-        return
+        try:
+            conn = libvirt.open("qemu:///system")
+            dom = conn.lookupByUUIDString(vm.uuid)
+            return True
+        except:
+            return False
