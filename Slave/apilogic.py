@@ -43,7 +43,7 @@ class API:
         self.memory = int(resources['memory'])
         self.storage = int(resources['storage'])
         self.vmstack = []
-        self.manager = VirtualManager()
+        self.manager = VirtualManager(settings['qcow_path'], settings['base_image_path'])
 
     # Returns the API info in json format
     def getAPIInfo(self):
@@ -96,8 +96,12 @@ class API:
             for vm in self.vmstack:
                 if vm.matchUUID(data['uuid']):
                     kwargs = {"vm": vm}
-                    res = getattr(self.manager, function)(**kwargs)
-                    return Response(Status.SUCCESS, "Action succesfully applied: " + function).respond()
+                    succ = getattr(self.manager, function)(**kwargs)
+                    if succ == True:
+                        return Response(Status.SUCCESS, "Action succesfully applied: " + function).respond()
+                    else:
+                        return Response(Status.FAILURE, "Action not applied: " + function).respond()
+                        
 
             return Response(Status.FAILURE, "VM Not Found").respond()
             
@@ -112,12 +116,12 @@ class API:
             self.vmstack.append(
                 vm
             )
+            self.manager.createVM(vm)
+            
         except ValueError:
-            return "Missing tag in data, please check if you specify the following:"
+            del self.vmstack[len(self.vmstack)]
+            return Response(Status.FAILURE, "VM not created").respond()
         
-        # Tell the manager to creatae the vm
-        self.manager.createVM(vm)
-
         return Response(Status.SUCCESS, "VM Succesfully created", {"uuid": vm.uuid}).respond()
 
     def rebootVM(self, data):

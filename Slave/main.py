@@ -5,6 +5,11 @@ import configparser
 import json
 import sys
 
+
+## ToDO
+## Write a function that authenticates this server to the master
+
+
 def readConfig(file):
     config = configparser.ConfigParser()
     config.read(file)

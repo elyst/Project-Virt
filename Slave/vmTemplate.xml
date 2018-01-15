@@ -1,0 +1,38 @@
+<domain type="kvm">
+    <name>kaasstengel</name>
+    <uuid>118c973f-29f5-4353-acfc-7f9c3c23a250</uuid>
+    <memory>1000000</memory>
+    <currentMemory>1000000</currentMemory>
+    <vcpu>1</vcpu>
+    <os>
+        <type>hvm</type>
+        <boot dev="cdrom" />
+    </os>
+    <features>
+        <acpi />
+    </features>
+    <clock offset="utc" />
+    <on_poweroff>destroy</on_poweroff>
+    <on_reboot>restart</on_reboot>
+    <on_crash>restart</on_crash>
+    <devices>
+        <emulator>/usr/bin/kvm</emulator>
+        <disk device="disk" type="file">
+            <driver name="qemu" type="qcow2" />
+            <source file="/home/john/Desktop/images/kaasstengel.qcow2" />
+            <target bus="virtio" dev="vda" />
+            <address bus="0x00" domain="0x0000" function="0x0" slot="0x04" type="pci" />
+        </disk>
+        <interface type="bridge">
+            <source bridge="virbr0" />
+        </interface>
+        <controller index="0" type="ide">
+            <address bus="0x00" domain="0x0000" function="0x1" slot="0x01" type="pci" />
+        </controller>
+        <input bus="ps2" type="mouse" />
+        <graphics autoport="yes" listen="0.0.0.0" port="-1" type="vnc" />
+        <console type="pty">
+            <target port="0" />
+        </console>
+    </devices>
+</domain>
