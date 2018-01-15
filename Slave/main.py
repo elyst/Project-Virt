@@ -31,7 +31,7 @@ def constructRoutes(app, data):
 
     base_api = "/{}/".format(api.version)
 
-    @app.route("/")
+    @app.route("/", methods=["GET"])
     def root():
         return json.dumps(
             api.getAPIInfo()
@@ -45,11 +45,21 @@ def constructRoutes(app, data):
     def rebootvm():
         return api.rebootVM(byteToJson(request.data))
 
+    @app.route(base_api + "start", methods=["POST"])
+    def startvm():
+        return api.startVM(byteToJson(request.data))
+
+    @app.route(base_api + "shutdown", methods=["POST"])
+    def stopvm():
+        return api.shutdownVM(byteToJson(request.data))
+
+    @app.route(base_api + "destroy", methods=["POST"])
+    def destroyvm():
+        return api.destroyVMI(byteToJson(request.data))
+
     @app.route(base_api + "list", methods=["GET"])
     def getInfo():
         return api.listVM()
-
-    
 
 def start(app):
     app.run()
