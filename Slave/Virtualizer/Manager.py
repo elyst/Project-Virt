@@ -86,7 +86,6 @@ class VirtualManager():
 
             os.system("rm -rf {}/{}.qcow2".format(self.diskpath, vm.name))
 
-
             return True
         except:
             return False
